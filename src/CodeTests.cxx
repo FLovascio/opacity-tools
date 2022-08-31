@@ -63,7 +63,7 @@ int main() {
   }
   // conductivity solver tests//
   conductivity::mixedGrain<double> testGrain(conductivity::readGrain<double>(
-      "/Users/fra/Code/Opacity/new_cons/Normal_silicates/",1.0e-4));
+      "./../new_cons/Normal_silicates/",1.0e-4));
   std::cout << "read grain ok!\n";
   std::cout << "testGrain delta_i[0]=" << testGrain.delta_i[0] << "\n";
   std::cout << "lambda[0],sigma_ij[0][0]=" << testGrain.lambda_k[0] << ","
@@ -93,7 +93,7 @@ int main() {
 
   // testing opacity calculation //
   //dust::dustDistribution<double> testDistribution(2.5e-7,5e-4,1.0,500,0.013986,dust::MRN_Pollack<double>);
-  dust::dustDistribution<double> testDistribution("/Users/fra/Code/Opacity/OpacityTools/ReferenceValues/reference_data_dust_s.csv","/Users/fra/Code/Opacity/OpacityTools/ReferenceValues/reference_data_dust.csv");
+  dust::dustDistribution<double> testDistribution("./../ReferenceValues/reference_data_dust_s.csv","./../ReferenceValues/reference_data_dust.csv");
   std::vector<double> KDust=opacity::KappaDust<double>(testGrain.lambda_k,testGrain.sigma_eff_j,testDistribution);
   std::cout<<KDust[1]<<"\n";
   if(binaryFiles::writeRealVectorToBinary<double>(KDust,"KDust.bin")){
