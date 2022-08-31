@@ -57,10 +57,10 @@ RM = /opt/homebrew/Cellar/cmake/3.23.2/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/fra/Code/Opacity/OpacityTools
+CMAKE_SOURCE_DIR = /Users/fra/Code/opacity-tools
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/fra/Code/Opacity/OpacityTools/build
+CMAKE_BINARY_DIR = /Users/fra/Code/opacity-tools/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -97,14 +97,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(CMAKE_COMMAND) -E cmake_progress_start /Users/fra/Code/Opacity/OpacityTools/build/CMakeFiles /Users/fra/Code/Opacity/OpacityTools/build/src//CMakeFiles/progress.marks
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/fra/Code/Opacity/OpacityTools/build/CMakeFiles 0
+	cd /Users/fra/Code/opacity-tools/build && $(CMAKE_COMMAND) -E cmake_progress_start /Users/fra/Code/opacity-tools/build/CMakeFiles /Users/fra/Code/opacity-tools/build/src//CMakeFiles/progress.marks
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/fra/Code/opacity-tools/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/clean
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/clean
 .PHONY : clean
 
 # The main clean target
@@ -113,22 +113,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/preinstall
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/preinstall
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /Users/fra/Code/opacity-tools/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 src/CMakeFiles/OpacityTests.dir/rule:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/OpacityTests.dir/rule
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/OpacityTests.dir/rule
 .PHONY : src/CMakeFiles/OpacityTests.dir/rule
 
 # Convenience name for target.
@@ -137,12 +137,12 @@ OpacityTests: src/CMakeFiles/OpacityTests.dir/rule
 
 # fast build rule for target.
 OpacityTests/fast:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/OpacityTests.dir/build.make src/CMakeFiles/OpacityTests.dir/build
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/OpacityTests.dir/build.make src/CMakeFiles/OpacityTests.dir/build
 .PHONY : OpacityTests/fast
 
 # Convenience name for target.
 src/CMakeFiles/effective_conductivity.dir/rule:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/effective_conductivity.dir/rule
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/effective_conductivity.dir/rule
 .PHONY : src/CMakeFiles/effective_conductivity.dir/rule
 
 # Convenience name for target.
@@ -151,7 +151,7 @@ effective_conductivity: src/CMakeFiles/effective_conductivity.dir/rule
 
 # fast build rule for target.
 effective_conductivity/fast:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/effective_conductivity.dir/build.make src/CMakeFiles/effective_conductivity.dir/build
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/effective_conductivity.dir/build.make src/CMakeFiles/effective_conductivity.dir/build
 .PHONY : effective_conductivity/fast
 
 CodeTests.o: CodeTests.cxx.o
@@ -159,7 +159,7 @@ CodeTests.o: CodeTests.cxx.o
 
 # target to build an object file
 CodeTests.cxx.o:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/OpacityTests.dir/build.make src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.o
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/OpacityTests.dir/build.make src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.o
 .PHONY : CodeTests.cxx.o
 
 CodeTests.i: CodeTests.cxx.i
@@ -167,7 +167,7 @@ CodeTests.i: CodeTests.cxx.i
 
 # target to preprocess a source file
 CodeTests.cxx.i:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/OpacityTests.dir/build.make src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.i
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/OpacityTests.dir/build.make src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.i
 .PHONY : CodeTests.cxx.i
 
 CodeTests.s: CodeTests.cxx.s
@@ -175,7 +175,7 @@ CodeTests.s: CodeTests.cxx.s
 
 # target to generate assembly for a file
 CodeTests.cxx.s:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/OpacityTests.dir/build.make src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.s
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/OpacityTests.dir/build.make src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.s
 .PHONY : CodeTests.cxx.s
 
 ConductivityTools.o: ConductivityTools.cxx.o
@@ -183,7 +183,7 @@ ConductivityTools.o: ConductivityTools.cxx.o
 
 # target to build an object file
 ConductivityTools.cxx.o:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/effective_conductivity.dir/build.make src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.o
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/effective_conductivity.dir/build.make src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.o
 .PHONY : ConductivityTools.cxx.o
 
 ConductivityTools.i: ConductivityTools.cxx.i
@@ -191,7 +191,7 @@ ConductivityTools.i: ConductivityTools.cxx.i
 
 # target to preprocess a source file
 ConductivityTools.cxx.i:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/effective_conductivity.dir/build.make src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.i
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/effective_conductivity.dir/build.make src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.i
 .PHONY : ConductivityTools.cxx.i
 
 ConductivityTools.s: ConductivityTools.cxx.s
@@ -199,7 +199,7 @@ ConductivityTools.s: ConductivityTools.cxx.s
 
 # target to generate assembly for a file
 ConductivityTools.cxx.s:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/effective_conductivity.dir/build.make src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.s
+	cd /Users/fra/Code/opacity-tools/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/effective_conductivity.dir/build.make src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.s
 .PHONY : ConductivityTools.cxx.s
 
 # Help Target
@@ -230,6 +230,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /Users/fra/Code/opacity-tools/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

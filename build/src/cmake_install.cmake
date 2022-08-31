@@ -1,4 +1,4 @@
-# Install script for directory: /Users/fra/Code/Opacity/OpacityTools/src
+# Install script for directory: /Users/fra/Code/opacity-tools/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

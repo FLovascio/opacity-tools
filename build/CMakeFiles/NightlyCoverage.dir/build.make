@@ -53,10 +53,10 @@ RM = /opt/homebrew/Cellar/cmake/3.23.2/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/fra/Code/Opacity/OpacityTools
+CMAKE_SOURCE_DIR = /Users/fra/Code/opacity-tools
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/fra/Code/Opacity/OpacityTools/build
+CMAKE_BINARY_DIR = /Users/fra/Code/opacity-tools/build
 
 # Utility rule file for NightlyCoverage.
 
@@ -82,6 +82,6 @@ CMakeFiles/NightlyCoverage.dir/clean:
 .PHONY : CMakeFiles/NightlyCoverage.dir/clean
 
 CMakeFiles/NightlyCoverage.dir/depend:
-	cd /Users/fra/Code/Opacity/OpacityTools/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/fra/Code/Opacity/OpacityTools /Users/fra/Code/Opacity/OpacityTools /Users/fra/Code/Opacity/OpacityTools/build /Users/fra/Code/Opacity/OpacityTools/build /Users/fra/Code/Opacity/OpacityTools/build/CMakeFiles/NightlyCoverage.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/fra/Code/opacity-tools/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/fra/Code/opacity-tools /Users/fra/Code/opacity-tools /Users/fra/Code/opacity-tools/build /Users/fra/Code/opacity-tools/build /Users/fra/Code/opacity-tools/build/CMakeFiles/NightlyCoverage.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/NightlyCoverage.dir/depend
 

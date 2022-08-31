@@ -4,17 +4,17 @@
 
 
 # Configuration directories and files
-SourceDirectory: /Users/fra/Code/Opacity/OpacityTools
-BuildDirectory: /Users/fra/Code/Opacity/OpacityTools/build
+SourceDirectory: /Users/fra/Code/opacity-tools
+BuildDirectory: /Users/fra/Code/opacity-tools/build
 
 # Where to place the cost data store
 CostDataFile: 
 
 # Site is something like machine.domain, i.e. pragmatic.crd
-Site: Francescos-MBP
+Site: dhcp-181-174.ens-lyon.fr
 
 # Build name is osname-revision-compiler, i.e. Linux-2.4.2-2smp-c++
-BuildName: Darwin-aarch64-apple-darwin21-g++-11
+BuildName: Darwin-clang++
 
 # Subprojects
 LabelsForSubprojects: 
@@ -27,7 +27,7 @@ SubmitInactivityTimeout:
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/opt/homebrew/Cellar/cmake/3.23.2/bin/cmake" "/Users/fra/Code/Opacity/OpacityTools"
+ConfigureCommand: "/opt/homebrew/Cellar/cmake/3.23.2/bin/cmake" "/Users/fra/Code/opacity-tools"
 MakeCommand: /opt/homebrew/Cellar/cmake/3.23.2/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 
@@ -45,7 +45,7 @@ SVNOptions:
 SVNUpdateOptions: 
 
 # Git options
-GITCommand: 
+GITCommand: /usr/bin/git
 GITInitSubmodules: 
 GITUpdateOptions: 
 GITUpdateCustom: 
@@ -58,13 +58,13 @@ P4UpdateOptions:
 P4UpdateCustom: 
 
 # Generic update command
-UpdateCommand: 
+UpdateCommand: /usr/bin/git
 UpdateOptions: 
-UpdateType: 
+UpdateType: git
 
 # Compiler info
-Compiler: /opt/homebrew/bin/aarch64-apple-darwin21-g++-11
-CompilerVersion: 11.3.0
+Compiler: /usr/bin/clang++
+CompilerVersion: 13.0.0.13000029
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 

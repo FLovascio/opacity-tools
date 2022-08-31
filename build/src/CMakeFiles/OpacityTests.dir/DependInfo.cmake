@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/fra/Code/Opacity/OpacityTools/src/CodeTests.cxx" "src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.o" "gcc" "src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.o.d"
+  "/Users/fra/Code/opacity-tools/src/CodeTests.cxx" "src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.o" "gcc" "src/CMakeFiles/OpacityTests.dir/CodeTests.cxx.o.d"
   )
 
 # Targets to which this target links.

@@ -1,7 +1,7 @@
-set(CMAKE_C_COMPILER "/opt/homebrew/bin/aarch64-apple-darwin21-gcc-11")
+set(CMAKE_C_COMPILER "/usr/bin/clang")
 set(CMAKE_C_COMPILER_ARG1 "")
-set(CMAKE_C_COMPILER_ID "GNU")
-set(CMAKE_C_COMPILER_VERSION "11.3.0")
+set(CMAKE_C_COMPILER_ID "AppleClang")
+set(CMAKE_C_COMPILER_VERSION "13.0.0.13000029")
 set(CMAKE_C_COMPILER_VERSION_INTERNAL "")
 set(CMAKE_C_COMPILER_WRAPPER "")
 set(CMAKE_C_STANDARD_COMPUTED_DEFAULT "17")
@@ -18,17 +18,16 @@ set(CMAKE_C_SIMULATE_ID "")
 set(CMAKE_C_COMPILER_FRONTEND_VARIANT "")
 set(CMAKE_C_SIMULATE_VERSION "")
 
-set(CMAKE_C_COMPILER_SYSROOT "/Library/Developer/CommandLineTools/SDKs/MacOSX12.sdk/usr")
-set(CMAKE_COMPILER_SYSROOT "/Library/Developer/CommandLineTools/SDKs/MacOSX12.sdk/usr")
+
 
 
 set(CMAKE_AR "/usr/bin/ar")
-set(CMAKE_C_COMPILER_AR "/opt/homebrew/bin/aarch64-apple-darwin21-gcc-ar-11")
+set(CMAKE_C_COMPILER_AR "")
 set(CMAKE_RANLIB "/usr/bin/ranlib")
-set(CMAKE_C_COMPILER_RANLIB "/opt/homebrew/bin/aarch64-apple-darwin21-gcc-ranlib-11")
+set(CMAKE_C_COMPILER_RANLIB "")
 set(CMAKE_LINKER "/usr/bin/ld")
 set(CMAKE_MT "")
-set(CMAKE_COMPILER_IS_GNUCC 1)
+set(CMAKE_COMPILER_IS_GNUCC )
 set(CMAKE_C_COMPILER_LOADED 1)
 set(CMAKE_C_COMPILER_WORKS TRUE)
 set(CMAKE_C_ABI_COMPILED TRUE)
@@ -64,10 +63,10 @@ if(CMAKE_C_CL_SHOWINCLUDES_PREFIX)
 endif()
 
 
-set(CMAKE_C_SYSROOT_FLAG "-isysroot")
-set(CMAKE_C_OSX_DEPLOYMENT_TARGET_FLAG "-mmacosx-version-min=")
 
-set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/opt/homebrew/Cellar/gcc/11.3.0_2/lib/gcc/11/gcc/aarch64-apple-darwin21/11/include;/opt/homebrew/Cellar/gcc/11.3.0_2/lib/gcc/11/gcc/aarch64-apple-darwin21/11/include-fixed;/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/usr/include;/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/System/Library/Frameworks")
-set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "emutls_w;gcc;gcc")
-set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "/opt/homebrew/Cellar/gcc/11.3.0_2/lib/gcc/11/gcc/aarch64-apple-darwin21/11;/opt/homebrew/Cellar/gcc/11.3.0_2/lib/gcc/11/gcc;/opt/homebrew/Cellar/gcc/11.3.0_2/lib/gcc/11;/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/usr/lib")
+
+
+set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/Library/Developer/CommandLineTools/usr/lib/clang/13.0.0/include;/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/usr/include;/Library/Developer/CommandLineTools/usr/include")
+set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "")
+set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/usr/lib")
 set(CMAKE_C_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "/Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk/System/Library/Frameworks")

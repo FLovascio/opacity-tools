@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/fra/Code/Opacity/OpacityTools/src/ConductivityTools.cxx" "src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.o" "gcc" "src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.o.d"
+  "/Users/fra/Code/opacity-tools/src/ConductivityTools.cxx" "src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.o" "gcc" "src/CMakeFiles/effective_conductivity.dir/ConductivityTools.cxx.o.d"
   )
 
 # Targets to which this target links.
