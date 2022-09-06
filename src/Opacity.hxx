@@ -26,8 +26,8 @@ public:
     dustSizeDensity = makeSizeDensity(dustSizeFunction);
   };
   dustDistribution(std::string sFile, std::string epsFile){
-    if(delimitedFiles::readColumnToVector<double>(dustSizeBins,sFile)){}
-    if(delimitedFiles::readColumnToVector<double>(dustSizeDensity,epsFile)){}
+    if(delimitedFiles::readColumnToVector<T>(dustSizeBins,sFile)){}
+    if(delimitedFiles::readColumnToVector<T>(dustSizeDensity,epsFile)){}
     smin=dustSizeBins[0];
     smax=dustSizeBins[dustSizeBins.size()];
     nbin=dustSizeBins.size();
