@@ -6,6 +6,7 @@
 #include <complex>
 #include <functional>
 #include <vector>
+#include <utility>
 #include "FileIO.hxx"
 
 namespace dust {
@@ -33,6 +34,14 @@ public:
     nbin=dustSizeBins.size();
     rhograin=3.0;
   };
+  dustDistribution(T * s, T * rho, int len){
+    dustSizeBins(std::move(std::vector<T>(s,s+len)));
+    dustSizeDensity(std::move(std::vector<T>(rho,rho+len)));
+    smin=dustSizeBins[0];
+    smax=dustSizeBins[dustSizeBins.size()];
+    nbin=dustSizeBins.size();
+    rhograin=3.0;
+  }
   std::vector<T> makeSizeBins(T &smin, T &smax, int &nbin) {
     std::vector<T> retVec(nbin, 0.0);
     for (int i = 0; i < nbin; ++i) {

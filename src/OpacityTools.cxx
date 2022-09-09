@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <utility>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -24,14 +25,17 @@ int main(int argc, char **argv) {
   bool binaryOutput = true;
   std::string outputDir = "./";
   bool doublePrecision = true;
-  std::string distributionFile;
+  std::string distributionFile_s;
+  std::string distributionFile_d;  
   for (int i = 1; i < argc; ++i) {
     std::string arg(argv[i]);
     if (arg == "-h" || arg == "--help") {
       std::cout
-          << "Help will always be given at Hogwarts to those who ask for it..."
-          << "\n"
-          << "But you are not in Hogwarts, are you?\n";
+          << "\033[1;38mThe options are:\033[0m\n"
+          << "\033[1;35m-d(--from_dir) <source/directory/>\033[0m enter a directory containing a setup and dust file (default is ./)\n"
+          << "\033[1;35m-o(--output_dir) <output/directory/>\033[0m enter an output directory, default is ./\n"
+          << "\033[1;35m--text_output\033[0m output files will be plain text (outputs are binary files by default)\n"
+          << "\033[1;35m--FP32\033[0m sets maths to single precision\n";
       return 0;
     }
     if (arg == "--from_dir" || arg == "-d") {
@@ -86,18 +90,18 @@ int main(int argc, char **argv) {
                    "been set to single precision.\n";
     }
   }
-  distributionFile=dir+"dust_size_distribution.dat";
-  if (doublePrecision) {
-    conductivity::mixedGrain<double> grain(
-        conductivity::readGrainFromSetup(dir, 1e-4));
-    conductivity::solveSystem<double>(grain);
-    if(file_exists(distributionFile)){       
-    }
-    else{
+  distributionFile_s=dir+"dust_size.dat";
+  distributionFile_d=dir+"dust_size_distribution.dat";
+  if(file_exists(distributionFile_s)&&file_exists(distributionFile_d)){}
+  else{
         std::cerr<<"\033[1;31mIO ERROR: distributionFile cannot be opened!\033[0m \n";
         return 1;
     }
-    dust::dustDistribution<double> dustDist(distributionFile,distributionFile);
+  if (doublePrecision) {
+    conductivity::mixedGrain<double> grain(
+        std::move(conductivity::readGrainFromSetup(dir, 1e-4)));
+    conductivity::solveSystem<double>(grain);
+    dust::dustDistribution<double> dustDist(distributionFile_s,distributionFile_d);
     std::vector<double> KDust=opacity::KappaDust<double>(grain.lambda_k,grain.sigma_eff_j,dustDist);
     if (binaryOutput) {
       binaryFiles::writeComplexVectorToBinary<double>(
@@ -116,13 +120,7 @@ int main(int argc, char **argv) {
     conductivity::mixedGrain<float> grain=
         conductivity::readGrainFromSetup<float>(dir, 1e-4);
     conductivity::solveSystem<float>(grain);
-    if(file_exists(distributionFile)){
-    }
-    else{
-        std::cerr<<"\033[1;31mIO ERROR: distributionFile cannot be opened!\033[0m \n";
-        return 1;
-    }
-    dust::dustDistribution<float> dustDist(distributionFile,distributionFile);
+    dust::dustDistribution<float> dustDist(distributionFile_s,distributionFile_d);
     std::vector<float> KDust=opacity::KappaDust<float>(grain.lambda_k,grain.sigma_eff_j,dustDist);
     if (binaryOutput) {
       binaryFiles::writeComplexVectorToBinary<float>(

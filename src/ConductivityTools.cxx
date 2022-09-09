@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <utility>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -86,7 +87,7 @@ int main(int argc, char **argv) {
   }
   if (doublePrecision) {
     conductivity::mixedGrain<double> grain(
-        conductivity::readGrainFromSetup(dir, 1e-4));
+        std::move(conductivity::readGrainFromSetup(dir, 1e-4)));
     conductivity::solveSystem<double>(grain);
     if (binaryOutput) {
       binaryFiles::writeComplexVectorToBinary<double>(
