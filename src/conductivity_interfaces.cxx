@@ -2,19 +2,24 @@
 
 #include "conductivity_interfaces.h"
 
+#include "Conductivity.hxx"
 #include <stdlib.h>
 #include <utility>
-#include "Conductivity.hxx"
 
-typedef void* conductivityCls;
+extern "C" {
+typedef void* conductivityObj;
 
-extern  "C"{
-void calculateConductivity(conductivityCls cl){
-
+void calculateConductivity(conductivityObj grain) {
+  conductivity::solveSystem<double>(grain);
 }
-conductivityCls buildConductivity(char* dir){
-    conductivity::mixedGrain<double> * thisGrain = new conductivity::mixedGrain<double> (std::move(conductivity::readGrainFromSetup<double>(std::string(dir), 1e-4)));
-    
-
+conductivityObj buildConductivity(char *dir) {
+  conductivity::mixedGrain<double> *thisGrain =
+      new conductivity::mixedGrain<double>(std::move(
+          conductivity::readGrainFromSetup<double>(std::string(dir), 1e-4)));
+  return (void*) thisGrain;
+}
+void deallocateObject(conductivityObj grain){
+  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *> grain; 
+  delete thisGrain;
 }
 }
