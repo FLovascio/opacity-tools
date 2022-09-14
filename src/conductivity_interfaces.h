@@ -6,4 +6,4 @@ typedef void* conductivityObj;
     
 extern "C" void calculateConductivity(conductivityObj cl);
 extern "C" conductivityObj buildConductivity(char* dir);
-extern "C" void deallocateObject(conductivityObj);
+extern "C" void deallocateConductivityObject(conductivityObj);
