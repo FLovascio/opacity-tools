@@ -1,7 +1,3 @@
-#pragma once
-
-#include "opacity_interfaces.h"
-
 #include <stdlib.h>
 #include "Conductivity.hxx"
 #include "Opacity.hxx"

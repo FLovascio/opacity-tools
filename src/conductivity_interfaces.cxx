@@ -1,5 +1,3 @@
-#pragma once
-
 #include "conductivity_interfaces.h"
 
 #include "Conductivity.hxx"
@@ -10,7 +8,8 @@ extern "C" {
 typedef void* conductivityObj;
 
 void calculateConductivity(conductivityObj grain) {
-  conductivity::solveSystem<double>(grain);
+  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+  conductivity::solveSystem<double>(*thisGrain);
 }
 conductivityObj buildConductivity(char *dir) {
   conductivity::mixedGrain<double> *thisGrain =
@@ -19,7 +18,7 @@ conductivityObj buildConductivity(char *dir) {
   return (void*) thisGrain;
 }
 void deallocateObject(conductivityObj grain){
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *> grain; 
+  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain); 
   delete thisGrain;
 }
 }
