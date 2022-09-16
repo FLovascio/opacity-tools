@@ -6,8 +6,8 @@ A CMake example is provided and a simple example may be found in the documentati
 */
 
 #include <stdio.h>
-#include "../lib/opacities.h"
-#include "../lib/conductivities.h"
+#include "../include/opacities.h"
+#include "../include/conductivities.h"
 
 
 int main(){
@@ -19,7 +19,9 @@ int main(){
   calculateConductivity(grain);
   dustDist distribution=makeDustDist(s,e,10);
   calculateOpacity(distribution,grain,op);
-  printf("element one of the opacity array is %f",opacityValues[1]);
+  for(int i=1;i<113;++i){
+    printf(" %e : %e \n",lambda(grain,i),opacityValues[i]);
+  }
   deallocateDust(distribution);
   deallocateConductivityObject(grain);
   return 0;

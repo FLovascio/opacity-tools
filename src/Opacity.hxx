@@ -130,6 +130,39 @@ void KappaDust_fast(std::vector<T> &output, conductivity::mixedGrain<T> &grain,
   T sigma = 0.0;
   T xVar = 0.0;
   T HVar = 0.0;
+  std::cout<<"looping "<<output.size()<<" times\n";
+  for (int k = 0; k < output.size(); ++k) {
+    lambda = grain.lambda_k[k];
+    e1Var = e1(grain.sigma_eff_j[k]);
+    e2Var = e2(grain.sigma_eff_j[k]);
+    sigma = sigma_jk(lambda, e1Var, e2Var, 0.3333333333333333);
+    xVar = xj(sigma, lambda);
+    HVar = H_j(xVar, e1Var, e2Var);
+    for (int idust = 0; idust < dustDist.nbin; ++idust) {
+      xVar = xj<T>(lambda, dustDist.dustSizeBins[idust]);
+      HVar = H_j<T>(xVar, e1Var, e2Var);
+      output[k] += Kappa_j(idust, HVar, dustDist, sigma);
+    }
+    std::cout<<output[k]<<"\n";
+  }
+}
+
+template <class T>
+void KappaDust_fast_Array(T *output, conductivity::mixedGrain<T> &grain,
+                    dust::dustDistribution<T> &dustDist) {
+#ifdef WARN_FAST
+  std::cerr
+      << 'Warning: Fast methods do not boundscheck and may unexpectedly cause crashes and out of bound access\n'
+      << 'Hint: output (passed as an arg to this function may have different length than lambda_k (also passed as an arg)\n';
+#endif
+  T fillValue = (T)0.0;
+  T lambda = 0.0;
+  T e1Var = 0.0;
+  T e2Var = 0.0;
+  T sigma = 0.0;
+  T xVar = 0.0;
+  T HVar = 0.0;
+  //std::cout<<"looping "<<grain.lambda_k.size()<<" times\n";
   for (int k = 0; k < grain.lambda_k.size(); ++k) {
     lambda = grain.lambda_k[k];
     e1Var = e1(grain.sigma_eff_j[k]);
@@ -142,6 +175,7 @@ void KappaDust_fast(std::vector<T> &output, conductivity::mixedGrain<T> &grain,
       HVar = H_j<T>(xVar, e1Var, e2Var);
       output[k] += Kappa_j(idust, HVar, dustDist, sigma);
     }
+    //std::cout<<output[k]<<"\n";
   }
 }
 

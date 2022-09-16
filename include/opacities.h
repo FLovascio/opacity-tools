@@ -8,6 +8,7 @@ typedef void* opacityVector;
 
 
 dustDist makeDustDist(double*, double*, int);
+opacityVector makeOpacityVector(int);
 void setDustSize(double*, dustDist, int);
 void setDensity( double*, dustDist, int);
 void calculateOpacity(dustDist, conductivityObj, opacityVector);

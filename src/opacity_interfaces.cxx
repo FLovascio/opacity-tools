@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "Conductivity.hxx"
 #include "Opacity.hxx"
+#include "allocators.hxx"
 
 extern "C"{
 typedef void* dustDist;
@@ -35,6 +36,11 @@ dustDist makeDustDist(double* size, double* density, int len){
   auto dustDistribution=new dust::dustDistribution<double>(std::move(dust::dustDistribution<double>(size,density, len)));
   return (void*) dustDistribution;
 }
+opacityVector makeOpacityVector(int len){
+  std::vector<double> Opacity(0.0,len);
+  auto thisOpacity=new std::vector<double>(std::move(Opacity));
+  return (void*) thisOpacity;
+}
 void setDustSize(double* size, dustDist distribution, int len){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 
   thisDistribution->dustSizeBins=std::vector<double>(size,size+len);
@@ -43,11 +49,10 @@ void setDensity(double* density, dustDist distribution,int len){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 
   thisDistribution->dustSizeDensity=std::vector<double>(density,density+len);
 }
-void calculateOpacity(dustDist distribution,conductivityObj grain,opacityVector opacities){
+void calculateOpacity(dustDist distribution,conductivityObj grain,double* opacities){
   dust::dustDistribution<double> &thisDistribution = *static_cast<dust::dustDistribution<double> *> (distribution); 
   conductivity::mixedGrain<double> &thisGrain = *static_cast<conductivity::mixedGrain<double> *> (grain); 
-  std::vector<double> &thisOpacity = *static_cast<std::vector<double>*> (opacities);
-  opacity::KappaDust_fast<double>(thisOpacity, thisGrain, thisDistribution);  
+  opacity::KappaDust_fast_Array<double>(opacities, thisGrain, thisDistribution);  
 }
 void deallocateDust(dustDist distribution){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 
