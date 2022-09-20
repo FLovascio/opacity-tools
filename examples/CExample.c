@@ -15,7 +15,7 @@ int main(){
   double e[]={0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1};
   opacityVector op=(opacityVector)malloc(113*sizeof(double));
   double* opacityValues=(double*)op;
-  conductivityObj grain=buildConductivity((char*)"/Users/fra/Code/opacity-tools/new_cons/Normal_silicates/");
+  conductivityObj grain=buildConductivity((char*)"/Users/fra/Code/opacity-tools/new_cons/Normal_silicates/ ");
   calculateConductivity(grain);
   dustDist distribution=makeDustDist(s,e,10);
   calculateOpacity(distribution,grain,op);
