@@ -11,6 +11,6 @@ class interp1D{
    public:
    interp1D(std::vector<T> dataX, std::vector<T> dataY){
 
-   }    
-}
-}
+   }   
+};
+};

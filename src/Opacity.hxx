@@ -39,8 +39,8 @@ public:
     rhograin = 3.0;
   };
   dustDistribution(T *s, T *rho, int len) {
-    dustSizeBins=std::move(std::vector<T>(s, s + len));
-    dustSizeDensity=std::move(std::vector<T>(rho, rho + len));
+    dustSizeBins = std::move(std::vector<T>(s, s + len));
+    dustSizeDensity = std::move(std::vector<T>(rho, rho + len));
     smin = dustSizeBins[0];
     smax = dustSizeBins[dustSizeBins.size()];
     nbin = dustSizeBins.size();
@@ -130,7 +130,7 @@ void KappaDust_fast(std::vector<T> &output, conductivity::mixedGrain<T> &grain,
   T sigma = 0.0;
   T xVar = 0.0;
   T HVar = 0.0;
-  std::cout<<"looping "<<output.size()<<" times\n";
+  std::cout << "looping " << output.size() << " times\n";
   for (int k = 0; k < output.size(); ++k) {
     lambda = grain.lambda_k[k];
     e1Var = e1(grain.sigma_eff_j[k]);
@@ -143,13 +143,13 @@ void KappaDust_fast(std::vector<T> &output, conductivity::mixedGrain<T> &grain,
       HVar = H_j<T>(xVar, e1Var, e2Var);
       output[k] += Kappa_j(idust, HVar, dustDist, sigma);
     }
-    std::cout<<output[k]<<"\n";
+    std::cout << output[k] << "\n";
   }
 }
 
 template <class T>
 void KappaDust_fast_Array(T *output, conductivity::mixedGrain<T> &grain,
-                    dust::dustDistribution<T> &dustDist) {
+                          dust::dustDistribution<T> &dustDist) {
 #ifdef WARN_FAST
   std::cerr
       << 'Warning: Fast methods do not boundscheck and may unexpectedly cause crashes and out of bound access\n'
@@ -162,7 +162,7 @@ void KappaDust_fast_Array(T *output, conductivity::mixedGrain<T> &grain,
   T sigma = 0.0;
   T xVar = 0.0;
   T HVar = 0.0;
-  //std::cout<<"looping "<<grain.lambda_k.size()<<" times\n";
+  // std::cout<<"looping "<<grain.lambda_k.size()<<" times\n";
   for (int k = 0; k < grain.lambda_k.size(); ++k) {
     lambda = grain.lambda_k[k];
     e1Var = e1(grain.sigma_eff_j[k]);
@@ -175,7 +175,7 @@ void KappaDust_fast_Array(T *output, conductivity::mixedGrain<T> &grain,
       HVar = H_j<T>(xVar, e1Var, e2Var);
       output[k] += Kappa_j(idust, HVar, dustDist, sigma);
     }
-    //std::cout<<output[k]<<"\n";
+    // std::cout<<output[k]<<"\n";
   }
 }
 
@@ -205,4 +205,32 @@ std::vector<T> KappaDust(std::vector<T> lambda_k,
   }
   return output;
 }
+
+template <class T> T Planck(std::vector<T> &opacityVector, T) {
+
+}
+
+template <class T> T Rosseland(std::vector<T> &opacityVector, T) {
+
+}
+
 }; // namespace opacity
+
+namespace constants{
+const double c_light=2.99792458e10;
+const double one_over_c_light=1.0/c_light;
+const double h=6.6260755e-27;
+const double k=1.380658e-16;
+};
+namespace radiation{
+  template<class Type>
+  inline Type B_nu(Type nu, Type T){
+    Type hnu=constants::h*nu;
+    return 2*nu*nu*constants::one_over_c_light*constants::one_over_c_light*hnu*1.0/(exp(hnu/(constants::k*T))-1.0);
+  }
+  template<class Type>
+  inline Type B_lambda(Type lambda, Type T){
+    Type nu = constants::c_light/lambda;
+    return B_nu(nu, T);
+  }
+};
