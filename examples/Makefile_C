@@ -1,5 +1,5 @@
-CC = /opt/homebrew/bin/gcc-12#/usr/bin/clang  																#Path to your C compiler (Preferably the same used to compile opacity-tools)
-CPP = /opt/homebrew/bin/g++-12#/usr/bin/clang++															#Path to your C++ compiler (Preferably the same used to compile opacity-tools)
+CC = /opt/homebrew/bin/gcc-12 											#Path to your C compiler (Preferably the same used to compile opacity-tools)
+CPP = /opt/homebrew/bin/g++-12											#Path to your C++ compiler (Preferably the same used to compile opacity-tools)
 
 RM = /bin/rm																				#Path to rm for systems with $(RM) overridden
 
