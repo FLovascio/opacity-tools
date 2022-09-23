@@ -22,43 +22,32 @@ conductivityObj buildConductivity(char *dir) {
 }
 double lambda(conductivityObj grain, int i){
   conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
-  std::cout << thisGrain <<"\n";
-uint32_t tmp = 2;
-float d_CC = *((float*)&tmp);  
-
-std::cout << d_CC << std::endl;
-
-return thisGrain->lambda_k[i]; 
+  return thisGrain->lambda_k[i]; 
 }
 void deallocateConductivityObject(conductivityObj grain){
   conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain); 
   delete thisGrain;
 }
-void calculateconductivity_(conductivityObj grain){
-  calculateConductivity(grain); 
+void calculateconductivity_(conductivityObj* grain){
+  calculateConductivity(*grain); 
 }
 conductivityObj buildconductivity_(char *dir){
   return buildConductivity(dir);
 }
-double lambda_(conductivityObj* grain, int* i){
+double lambda_(conductivityObj * grain, int* i){
   conductivityObj gptr = *grain;
   return lambda(gptr,*i);
 }
 void deallocateconductivityObject_(conductivityObj grain){
   deallocateConductivityObject(grain);
 }
-conductivityObj testinterface_( char *dir, int* i, float* d){
-uint32_t ii = *((uint32_t*)i);
-uint32_t dd = *((uint32_t*)d);
-float d_C = 2.0;
-uint32_t d_CC = *((uint32_t*)&d_C);
-std::cout << std::hex <<  i << " " << d << " " << ii << " " << dd << " " << d_CC << "\n";
+conductivityObj testinterface_( char *dir){
   std::string fileDir=std::string(dir);
   std::cout<< "reading from " <<fileDir << "\n";
   conductivity::mixedGrain<double> *thisGrain =
     new conductivity::mixedGrain<double>(std::move(
         conductivity::readGrainFromSetup<double>(fileDir, 1e-4)));
-  std::cout << thisGrain <<"\n";
+  std::cout << "Expected lambda[1] at adress "<< thisGrain << " = " << lambda((void*) thisGrain,1)<< " " << "\n";
   return (void*) thisGrain;
 }
 }
