@@ -58,29 +58,29 @@ void deallocateDust(dustDist distribution){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 
   delete thisDistribution; 
 }
-dustDist makeDustDist_(double** size, double** density, int* len){
-  auto dustDistribution=new dust::dustDistribution<double>(std::move(dust::dustDistribution<double>(*size,*density,*len)));
+dustDist makedustdist_(double* size, double* density, int* len){
+  auto dustDistribution=new dust::dustDistribution<double>(std::move(dust::dustDistribution<double>(size,density,*len)));
   return (void*) dustDistribution;
 }
-opacityVector makeOpacityVector_(int* len){
+opacityVector makeopacityvector_(int* len){
   std::vector<double> Opacity(0.0,*len);
   auto thisOpacity=new std::vector<double>(std::move(Opacity));
   return (void*) thisOpacity;
 }
-void setDustSize_(double** size, dustDist* distribution, int* len){
+void setdustsize_(double* size, dustDist* distribution, int* len){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (*distribution); 
-  thisDistribution->dustSizeBins=std::vector<double>(*size,(*size)+(*len));
+  thisDistribution->dustSizeBins=std::vector<double>(size,(size)+(*len));
 }
-void setDensity_(double** density, dustDist* distribution,int* len){
+void setdensity_(double* density, dustDist* distribution,int* len){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (*distribution); 
-  thisDistribution->dustSizeDensity=std::vector<double>(*density,(*density)+(*len));
+  thisDistribution->dustSizeDensity=std::vector<double>(density,(density)+(*len));
 }
-void calculateOpacity_(dustDist* distribution,conductivityObj* grain,double** opacities){
+void calculateopacity_(dustDist* distribution,conductivityObj* grain,double* opacities){
   dust::dustDistribution<double> &thisDistribution = *static_cast<dust::dustDistribution<double> *> (*distribution); 
   conductivity::mixedGrain<double> &thisGrain = *static_cast<conductivity::mixedGrain<double> *> (*grain); 
-  opacity::KappaDust_fast_Array<double>(*opacities, thisGrain, thisDistribution);  
+  opacity::KappaDust_fast_Array<double>(opacities, thisGrain, thisDistribution);  
 }
-void deallocateDust_(dustDist* distribution){
+void deallocatedust_(dustDist* distribution){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (*distribution); 
   delete thisDistribution; 
 }
