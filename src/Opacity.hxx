@@ -170,6 +170,7 @@ void KappaDust_fast_Array(T *output, conductivity::mixedGrain<T> &grain,
     sigma = sigma_jk(lambda, e1Var, e2Var, 0.3333333333333333);
     xVar = xj(sigma, lambda);
     HVar = H_j(xVar, e1Var, e2Var);
+    //std::cout<<k<<"\n"; //debugging print
     for (int idust = 0; idust < dustDist.nbin; ++idust) {
       xVar = xj<T>(lambda, dustDist.dustSizeBins[idust]);
       HVar = H_j<T>(xVar, e1Var, e2Var);
@@ -213,7 +214,6 @@ template <class T> T Planck(std::vector<T> &opacityVector, T) {
 template <class T> T Rosseland(std::vector<T> &opacityVector, T) {
 
 }
-
 }; // namespace opacity
 
 namespace constants{
@@ -222,6 +222,7 @@ const double one_over_c_light=1.0/c_light;
 const double h=6.6260755e-27;
 const double k=1.380658e-16;
 };
+
 namespace radiation{
   template<class Type>
   inline Type B_nu(Type nu, Type T){
