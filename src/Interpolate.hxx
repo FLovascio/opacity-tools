@@ -10,7 +10,7 @@ class interp1D{
    std::vector<double> weights;
    public:
    interp1D(std::vector<T> dataX, std::vector<T> dataY){
-
+      
    }   
 };
 };
