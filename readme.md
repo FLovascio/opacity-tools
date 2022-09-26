@@ -35,10 +35,13 @@ Once built, the CLIs can be used by calling them form `opacity-tools/bin/`. The 
 To use the libraries what is needed depends on the language being used. If the code calling the libraries is written in C++, you can just link the headers, as in C++ opacity tools is written as a headder only library. For other languages, things are a bit more involved, but this use is supported and intended. 
 
 __C__
+
 For C linkage, you will have to link the static libraries found in `opacity-tools/lib/`, a simple example is provided in `opacity-tools/examples/`. The exposed C functions are also declared in the headers provided in `opacity-tools/include`, including these headers will allow for type checking and autocomplete in some editors/IDEs.
 
 __FORTRAN__
+
 For FORTRAN linkage, FORTRAN friendly functions `type functionname_(arg*, ...)` have been defined in the `*_interface.cxx` files, these functions take care of most quirks of FORTRAN arg passing quirks internally and _should_ behave to a user in the same way as their C counterparts. An example of FORTRAN usage of the libs is provided in `opacity-tools/examples/`. 
 
 __Other__
+
 There is currently no support for other languages, though a python wrapper is on the roadmap. All languages that can call C functions should be easy to support, and this can be "left as an exercise to the user".
