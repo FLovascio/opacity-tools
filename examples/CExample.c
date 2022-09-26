@@ -19,9 +19,10 @@ int main(){
   calculateConductivity(grain);
   dustDist distribution=makeDustDist(s,e,10);
   calculateOpacity(distribution,grain,op);
-  for(int i=0;i<113;++i){
-    printf(" %e : %e \n",lambda(grain,i),opacityValues[i]);
-  }
+  //for(int i=0;i<113;++i){
+    //printf(" %e : %e \n",lambda(grain,i),opacityValues[i]);
+  //}
+  printf(" %e : %e \n",lambda(grain,111),opacityValues[111]);
   deallocateDust(distribution);
   deallocateConductivityObject(grain);
   return 0;
