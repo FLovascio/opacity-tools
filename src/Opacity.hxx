@@ -207,11 +207,11 @@ std::vector<T> KappaDust(std::vector<T> lambda_k,
   return output;
 }
 
-template <class T> T Planck(std::vector<T> &opacityVector, T) {
+template <class numType> numType Planck(std::vector<numType> &opacityVector, numType T) {
 
 }
 
-template <class T> T Rosseland(std::vector<T> &opacityVector, T) {
+template <class numType> numType Rosseland(std::vector<numType> &opacityVector, numType T) {
 
 }
 }; // namespace opacity
@@ -224,14 +224,14 @@ const double k=1.380658e-16;
 };
 
 namespace radiation{
-  template<class Type>
-  inline Type B_nu(Type nu, Type T){
-    Type hnu=constants::h*nu;
+  template<class numType>
+  inline numType B_nu(numType nu, numType T){
+    numType hnu=constants::h*nu;
     return 2*nu*nu*constants::one_over_c_light*constants::one_over_c_light*hnu*1.0/(exp(hnu/(constants::k*T))-1.0);
   }
-  template<class Type>
-  inline Type B_lambda(Type lambda, Type T){
-    Type nu = constants::c_light/lambda;
+  template<class numType>
+  inline numType B_lambda(numType lambda, numType T){
+    numType nu = constants::c_light/lambda;
     return B_nu(nu, T);
   }
 };
