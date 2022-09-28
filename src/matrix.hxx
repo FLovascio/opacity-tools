@@ -49,6 +49,14 @@ class static2Matrix{
   T& operator()(int i, int j){
     return *data[j+i*Cols];
   }
+  static2Matrix<T,Rows,Cols> operator*(const static2Matrix<T,Rows,Cols>& a){
+    static2Matrix<T,Rows,Cols> retMatrix;
+
+  } 
+  static2Matrix<T,Rows,Cols> operator*(const static2Matrix<T,Rows,1>& v){
+    static2Matrix<T,Rows,1> retVector;
+
+  } 
 };
 template<class T,int Rows,int Cols>
 std::tuple<static2Matrix<T,Rows,Cols>,static2Matrix<T,Rows,Cols>> LU(static2Matrix<T,Rows,Cols> A){
@@ -56,7 +64,7 @@ std::tuple<static2Matrix<T,Rows,Cols>,static2Matrix<T,Rows,Cols>> LU(static2Matr
   static2Matrix<T,Rows,Cols> U;
   if constexpr(Rows != Cols){
     std::cerr<< "SHAPE ERROR: Rows != Cols. Aborting!\n";
-    return {L,U};
+    return std::make_tuple(L,U);;
   }
   for (int i = 0; i < Rows; i++){
     // Upper Triangular
@@ -84,6 +92,7 @@ std::tuple<static2Matrix<T,Rows,Cols>,static2Matrix<T,Rows,Cols>> LU(static2Matr
       }
     }
   }
+  return std::make_tuple(L,U);
 }
 
 };
