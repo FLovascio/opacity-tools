@@ -44,14 +44,28 @@ namespace integrals{
   };
   template<class T>
   void computeWeights(Simpson<T> &v){
-    v.weights[0]=(T)1;
-    for(int i=0;i<v.weights.size();++i){
-      
+    v.weights[0]=(T)1.0;
+    for(int i=1;i<v.weights.size();i+=2){
+      v.weights[i]=(T)4.0;
     }
+    for(int i=2;i<v.weights.size();i+=2){
+      v.weights[i]=(T)2.0;
+    }
+    v.weights[v.weights.size()-1]=(T)1.0;
   };
   template<class T>
   void computeWeights(Simpson38<T> &v){
-
+    v.weights[0]=(T)1.0;
+    for(int i=1;i<v.weights.size();i+=3){
+      v.weights[i]=(T)3.0;
+    }
+    for(int i=2;i<v.weights.size();i+=3){
+      v.weights[i]=(T)3.0;
+    }
+    for(int i=3;i<v.weights.size();i+=3){
+      v.weights[i]=(T)2.0;
+    }
+    v.weights[v.weights.size()-1]=(T)1.0;
   };
   template<class T>
   void computeWeights(Trapezoid<T> &v){
