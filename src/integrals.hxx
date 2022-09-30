@@ -124,7 +124,21 @@ namespace integrals{
   }
   template<class T>
   T computeIntegral(std::vector<T> data, CompositeSimpson<T> method){
-    
+    T integral=(T)0.0;
+    T sixth=(T)0.166666666666666666;
+    for(int i=1;i<((data.size()/2)-2);++i){
+      T hi=method.data_x[2*i]-method.data_x[(2*i)-1];
+      T hip=method.data_x[(2*i)+1]-method.data_x[2*i];
+      integral+=sixth*(hi+hip)
+                        *((2.0-hi/hip)*data[2*i] +
+                         (((hi+hip)*(hi+hip)/(hi*hip)))*data[2*i+1] +
+                         (2.0-hi/hip)*data[2*i+2]);
+    }
+    if(data.size()%2){
+      T hn=method.data_x[data.size()-1]-method.data_x[data.size()-2];
+      T hnm=method.data_x[data.size()-2]-method.data_x[data.size()-3];
+      integral+=data[data.size()-1]*((2.0*hn*hn)+(3.0*hn*hnm))/(6.0*(hnm+hn));
+    } 
   }
 };
 
