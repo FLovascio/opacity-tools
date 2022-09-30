@@ -3,6 +3,7 @@
 #include "Conductivity.hxx"
 #include "FileIO.hxx"
 #include "roots.hxx"
+#include "utils.hxx"
 #include <cmath>
 #include <complex>
 #include <functional>
@@ -207,13 +208,27 @@ std::vector<T> KappaDust(std::vector<T> lambda_k,
   return output;
 }
 
-template <class numType> numType Planck(std::vector<numType> &opacityVector, numType T) {
 
-}
-
-template <class numType> numType Rosseland(std::vector<numType> &opacityVector, numType T) {
-
-}
+template <class T>
+class meanOpacity{
+  std::vector<T> kappa_nu;
+  std::vector<T> lambda;
+  std::vector<T> BKappa_nu;
+  T planck;
+  T rosseland;
+  T Temperature;
+  meanOpacity(const std::vector<T> &k_in,const std::vector<T> &l_in, T Temperature){
+    kappa_nu=std::vector<T>(k_in);
+    lambda=std::vector<T>(l_in);
+    BKappa_nu=std::vector<T>((T)0.0);
+    planck=(T)0.0;
+    rosseland=(T)0.0;
+    utils::brodcast<T,T>(std::move(radiation::B_lambda),lambda,BKappa_nu,Temperature);
+    
+  }
+  void Planck();
+  void Rosseland();
+};
 }; // namespace opacity
 
 namespace constants{

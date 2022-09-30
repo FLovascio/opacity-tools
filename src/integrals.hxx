@@ -98,15 +98,18 @@ namespace integrals{
   };
   template<class T>
   T computeIntegral(const std::vector<T> &data, Simpson<T> weights){
-
+    //to implement
+    return T(0);
   }
   template<class T>
   T computeIntegral(const std::vector<T> &data, Simpson38<T> weights){
-
+    //to implement
+    return T(0);
   }
   template<class T>
   T computeIntegral(const std::vector<T> &data, Trapezoid<T> weights){
-
+    //to implement
+    return T(0);
   }
   template<class T>
   T computeIntegral(const std::vector<T> &data, Composite<T> method){
@@ -138,6 +141,8 @@ namespace integrals{
       T hn=method.data_x[data.size()-1]-method.data_x[data.size()-2];
       T hnm=method.data_x[data.size()-2]-method.data_x[data.size()-3];
       integral+=data[data.size()-1]*((2.0*hn*hn)+(3.0*hn*hnm))/(6.0*(hnm+hn));
+      integral+=data[data.size()-2]*(hn*hn+3.0*hn*hnm)/(6.0*hnm);
+      integral+=data[data.size()-3]*(hn*hn*hn)/(6.0*hnm*(hnm+hn));
     } 
   }
 };
