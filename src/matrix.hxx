@@ -59,7 +59,7 @@ class static2Matrix{
   } 
 };
 template<class T,int Rows,int Cols>
-std::tuple<static2Matrix<T,Rows,Cols>,static2Matrix<T,Rows,Cols>> LU(static2Matrix<T,Rows,Cols> A){
+std::tuple<static2Matrix<T,Rows,Cols>,static2Matrix<T,Rows,Cols>> LU(static2Matrix<T,Rows,Cols>& A){
   static2Matrix<T,Rows,Cols> L;
   static2Matrix<T,Rows,Cols> U;
   if constexpr(Rows != Cols){
@@ -95,4 +95,11 @@ std::tuple<static2Matrix<T,Rows,Cols>,static2Matrix<T,Rows,Cols>> LU(static2Matr
   return std::make_tuple(L,U);
 }
 
+template<class T,int Rows,int Cols>
+static2Matrix<T,Rows,1> LUsolve(static2Matrix<T,Rows,Cols>& A, static2Matrix<T,Rows,1> &v){
+  auto LUmat = LU(A);
+  static2Matrix<T,Rows,1> z;
+  static2Matrix<T,Rows,1> x;
+  
+}
 };

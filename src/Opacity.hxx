@@ -2,8 +2,10 @@
 
 #include "Conductivity.hxx"
 #include "FileIO.hxx"
+#include "constants.hxx"
 #include "roots.hxx"
 #include "utils.hxx"
+#include "integrals.hxx"
 #include <cmath>
 #include <complex>
 #include <functional>
@@ -171,7 +173,7 @@ void KappaDust_fast_Array(T *output, conductivity::mixedGrain<T> &grain,
     sigma = sigma_jk(lambda, e1Var, e2Var, 0.3333333333333333);
     xVar = xj(sigma, lambda);
     HVar = H_j(xVar, e1Var, e2Var);
-    //std::cout<<k<<"\n"; //debugging print
+    // std::cout<<k<<"\n"; //debugging print
     for (int idust = 0; idust < dustDist.nbin; ++idust) {
       xVar = xj<T>(lambda, dustDist.dustSizeBins[idust]);
       HVar = H_j<T>(xVar, e1Var, e2Var);
@@ -208,45 +210,68 @@ std::vector<T> KappaDust(std::vector<T> lambda_k,
   return output;
 }
 
+template <class numType> numType B_nu(numType nu, numType T) {
+  numType hnu = constants::h * nu;
+  return 2 * nu * nu * constants::one_over_c_light *
+         constants::one_over_c_light * hnu * 1.0 /
+         (exp(hnu / (constants::k * T)) - 1.0);
+}
 
-template <class T>
-class meanOpacity{
-  std::vector<T> kappa_nu;
-  std::vector<T> lambda;
-  std::vector<T> BKappa_nu;
-  T planck;
-  T rosseland;
-  T Temperature;
-  meanOpacity(const std::vector<T> &k_in,const std::vector<T> &l_in, T Temperature){
-    kappa_nu=std::vector<T>(k_in);
-    lambda=std::vector<T>(l_in);
-    BKappa_nu=std::vector<T>((T)0.0);
-    planck=(T)0.0;
-    rosseland=(T)0.0;
-    utils::brodcast<T,T>(std::move(radiation::B_lambda),lambda,BKappa_nu,Temperature);
-    
-  }
-  void Planck();
-  void Rosseland();
+template <class numType> numType dBdT_nu(numType nu, numType T) {
+  numType hnu = constants::h * nu;
+  numType hnukt = hnu / (constants::k * T);
+  numType ehnukt =  exp(hnukt);
+  return hnukt/((constants::k * T)*(ehnukt-(numType)1.0))*ehnukt;
+}
+
+template <class numType> numType B_lambda(numType lambda, numType T) {
+  numType nu = constants::c_light / lambda;
+  return B_nu(nu, T);
+}
+
+template <class numType> numType dBdT_lambda(numType lambda, numType T) {
+  numType nu = constants::c_light / lambda;
+  return dBdT_nu(nu, T);
+}
+
+template <class T> class meanOpacity {
+  private:
+    std::vector<T> BKappa_nu;
+    std::vector<T> U_nu;
+  public:
+   std::vector<T> kappa_nu;
+   std::vector<T> lambda;
+   int length;
+   T planck;
+   T rosseland;
+   T Temperature;
+   meanOpacity(const std::vector<T> &k_in, const std::vector<T> &l_in,
+               T Temperature) {
+     kappa_nu = std::vector<T>(k_in);
+     lambda = std::vector<T>(l_in);
+     BKappa_nu = std::vector<T>((T)0.0,lambda.size());
+     int length = lambda.size(); 
+     planck = Planck();
+     rosseland = (T)0.0;
+   }
+   void Planck(){
+     for(int i=0;i<this->length;++i){
+       BKappa_nu[i]=kappa_nu[i]*B_lambda(lambda[i],Temperature);
+     }
+     integrals::CompositeSimpson<T> integral(lambda);
+     planck=integrals::computeIntegral(BKappa_nu,integral);
+   };
+   void Rosseland(){
+     for(int i=0;i<this->length;++i){
+       BKappa_nu[i]=dBdT_lambda(lambda[i],Temperature)/kappa_nu[i];
+     }
+     for(int i=0;i<this->length;++i){
+       U_nu[i]=dBdT_lambda(lambda[i],Temperature);
+     }
+     integrals::CompositeSimpson<T> integral(lambda);
+     rosseland=integrals::computeIntegral(U_nu,integral); 
+     rosseland/=integrals::computeIntegral(BKappa_nu,integral);
+   };
 };
+
 }; // namespace opacity
-
-namespace constants{
-const double c_light=2.99792458e10;
-const double one_over_c_light=1.0/c_light;
-const double h=6.6260755e-27;
-const double k=1.380658e-16;
-};
-
-namespace radiation{
-  template<class numType>
-  inline numType B_nu(numType nu, numType T){
-    numType hnu=constants::h*nu;
-    return 2*nu*nu*constants::one_over_c_light*constants::one_over_c_light*hnu*1.0/(exp(hnu/(constants::k*T))-1.0);
-  }
-  template<class numType>
-  inline numType B_lambda(numType lambda, numType T){
-    numType nu = constants::c_light/lambda;
-    return B_nu(nu, T);
-  }
-};
