@@ -2,6 +2,6 @@
 add_executable(OpacityTests CodeTests.cxx Conductivity.hxx FileIO.hxx Opacity.hxx roots.hxx allocators.hxx)
 add_executable(effective_conductivity ConductivityTools.cxx FileIO.hxx roots.hxx Conductivity.hxx allocators.hxx)
 add_executable(opacity OpacityTools.cxx Opacity.hxx FileIO.hxx roots.hxx Conductivity.hxx allocators.hxx )
-add_library(opacities opacity_interfaces.h opacity_interfaces.cxx Opacity.hxx FileIO.hxx roots.hxx Conductivity.hxx allocators.hxx)
+add_library(opacities opacity_interfaces.h opacity_interfaces.cxx Opacity.hxx FileIO.hxx roots.hxx Conductivity.hxx allocators.hxx integrals.hxx)
 add_library(conductivities conductivity_interfaces.h conductivity_interfaces.cxx FileIO.hxx roots.hxx Conductivity.hxx allocators.hxx)
 

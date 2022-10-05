@@ -59,7 +59,7 @@ void deallocateDust(dustDist distribution){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 
   delete thisDistribution; 
 }
-meanOpacity makeMeanOpacity(const double* k_in, const double* l_in, double Temperature,int len){
+meanOpacity makeMeanOpacity(double* k_in, double* l_in, double Temperature,int len){
   auto meanOpacityObject=new opacity::meanOpacity<double>(opacity::meanOpacity<double>(k_in,l_in,Temperature,len));
   return (void*) meanOpacityObject;
 }

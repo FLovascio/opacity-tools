@@ -247,14 +247,14 @@ public:
   T planck;
   T rosseland;
   T Temperature;
-  meanOpacity(const T* k_in, const T* l_in,
+  meanOpacity(T* k_in, T* l_in,
               T Temperature, int len) {
     kappa_nu = k_in;
     int length = len;
-    lambda(std::move(std::vector<T>(l_in, l_in + len)));
-    BKappa_nu(std::move(std::vector<T>((T)0.0, length)));
-    planck = Planck();
-    rosseland = Rosseland();
+    lambda=std::move(std::vector<T>(l_in, l_in + len));
+    BKappa_nu=std::move(std::vector<T>((T)0.0, length));
+    Planck();
+    Rosseland();
   }
   void Planck() {
     for (int i = 0; i < this->length; ++i) {
