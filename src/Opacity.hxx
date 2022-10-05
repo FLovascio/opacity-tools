@@ -247,12 +247,12 @@ public:
   T planck;
   T rosseland;
   T Temperature;
-  meanOpacity(const T* k_in, const std::vector<T> &l_in,
-              T Temperature) {
+  meanOpacity(const T* k_in, const T* l_in,
+              T Temperature, int len) {
     kappa_nu = k_in;
-    lambda = std::vector<T>(l_in);
-    BKappa_nu = std::vector<T>((T)0.0, lambda.size());
-    int length = lambda.size();
+    int length = len;
+    lambda(std::move(std::vector<T>(l_in, l_in + len)));
+    BKappa_nu(std::move(std::vector<T>((T)0.0, length)));
     planck = Planck();
     rosseland = Rosseland();
   }
@@ -284,7 +284,7 @@ public:
   void setLambda(std::vector<T> &lambda_temp){
     if constexpr(memSafe){
       if(lambda_temp.size()!=length){
-        std::cerr<<"MEMORY ERROR: new opacity vector length is not equal to original. All classes are malloc-ed with fixed size, this assignment would lead to undefined behaviour.\n";
+        std::cerr<<"MEMORY ERROR: new lambda vector length is not equal to original. All library instantiations are malloc-ed with fixed size, this assignment would lead to undefined behaviour.\n";
         return (void)NULL;
       }
     }

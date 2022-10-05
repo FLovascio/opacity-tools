@@ -59,17 +59,42 @@ void deallocateDust(dustDist distribution){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 
   delete thisDistribution; 
 }
-meanOpacity makeMeanOpacity(){}
-void setKappa_nu(){}
-void setLambda(){}
-void computePlanck(){}
-void computeRosseland(){}
-double getPlanck(){}
-double getRosseland(){}
+meanOpacity makeMeanOpacity(const double* k_in, const double* l_in, double Temperature,int len){
+  auto meanOpacityObject=new opacity::meanOpacity<double>(opacity::meanOpacity<double>(k_in,l_in,Temperature,len));
+  return (void*) meanOpacityObject;
+}
+void setKappa_nu(double* k_nu,meanOpacity meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (meanOpacityObject);
+  thisMeanOpacity->setKappa_nu(k_nu);
+}
+void setTemperature(double T,meanOpacity meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (meanOpacityObject);
+  thisMeanOpacity->setTemperature(T);
+}
+void computePlanck(meanOpacity meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (meanOpacityObject);
+  thisMeanOpacity->Planck();
+}
+void computeRosseland(meanOpacity meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (meanOpacityObject);
+  thisMeanOpacity->Rosseland();
+}
+double getPlanck(meanOpacity meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (meanOpacityObject);
+  return thisMeanOpacity->planck;
+}
+double getRosseland(meanOpacity meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (meanOpacityObject);
+  return thisMeanOpacity->rosseland;
+}
 
 dustDist makedustdist_(double* size, double* density, int* len){
   auto dustDistribution=new dust::dustDistribution<double>(std::move(dust::dustDistribution<double>(size,density,*len)));
   return (void*) dustDistribution;
+}
+meanOpacity makemeanopacity_(double* k_in, double* l_in, double* Temperature, int* len){
+  auto meanOpacityObject=new opacity::meanOpacity<double>(opacity::meanOpacity<double>(k_in,l_in,*Temperature,*len));
+  return (void*) meanOpacityObject; 
 }
 opacityVector makeopacityvector_(int* len){
   std::vector<double> Opacity(0.0,*len);
@@ -92,6 +117,30 @@ void calculateopacity_(dustDist* distribution,conductivityObj* grain,double* opa
 void deallocatedust_(dustDist* distribution){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (*distribution); 
   delete thisDistribution; 
+}
+void setkappa_nu_(double* k_nu,meanOpacity* meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (*meanOpacityObject);
+  thisMeanOpacity->setKappa_nu(k_nu);
+}
+void settemperature_(double* T,meanOpacity* meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (*meanOpacityObject);
+  thisMeanOpacity->setTemperature(*T);
+}
+void computeplanck_(meanOpacity* meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (*meanOpacityObject);
+  thisMeanOpacity->Planck();
+}
+void computerosseland_(meanOpacity* meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (*meanOpacityObject);
+  thisMeanOpacity->Rosseland();
+}
+double getplanck_(meanOpacity* meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (*meanOpacityObject);
+  return thisMeanOpacity->planck;
+}
+double getrosseland_(meanOpacity* meanOpacityObject){
+  auto thisMeanOpacity = static_cast<opacity::meanOpacity<double> *> (*meanOpacityObject);
+  return thisMeanOpacity->rosseland;
 }
 #endif
 };
