@@ -7,6 +7,7 @@ extern "C"{
 typedef void* dustDist;
 typedef void* conductivityObj;
 typedef void* opacityVector;
+typedef void* meanOpacity;
 
 #ifdef FP32
 dustDist makeDustDist(float* size, float* density, int len){
@@ -58,6 +59,14 @@ void deallocateDust(dustDist distribution){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 
   delete thisDistribution; 
 }
+meanOpacity makeMeanOpacity(){}
+void setKappa_nu(){}
+void setLambda(){}
+void computePlanck(){}
+void computeRosseland(){}
+double getPlanck(){}
+double getRosseland(){}
+
 dustDist makedustdist_(double* size, double* density, int* len){
   auto dustDistribution=new dust::dustDistribution<double>(std::move(dust::dustDistribution<double>(size,density,*len)));
   return (void*) dustDistribution;

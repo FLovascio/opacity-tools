@@ -11,6 +11,7 @@
 #include <functional>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 namespace dust {
 template <class T> class dustDistribution {
@@ -240,20 +241,20 @@ private:
   std::vector<T> U_nu;
 
 public:
-  std::vector<T> kappa_nu;
+  T* kappa_nu;
   std::vector<T> lambda;
   int length;
   T planck;
   T rosseland;
   T Temperature;
-  meanOpacity(const std::vector<T> &k_in, const std::vector<T> &l_in,
+  meanOpacity(const T* k_in, const std::vector<T> &l_in,
               T Temperature) {
-    kappa_nu = std::vector<T>(k_in);
+    kappa_nu = k_in;
     lambda = std::vector<T>(l_in);
     BKappa_nu = std::vector<T>((T)0.0, lambda.size());
     int length = lambda.size();
     planck = Planck();
-    rosseland = (T)0.0;
+    rosseland = Rosseland();
   }
   void Planck() {
     for (int i = 0; i < this->length; ++i) {
@@ -276,21 +277,14 @@ public:
   void setTemperature(T Temp){
     Temperature = Temp;
   }
-  template<bool memSafe>
-  void setKappa_nu(std::vector<T> &kappa_nu_temp){
-    if constexpr(memSafe){
-      if(kappa_nu_temp.size()!=length){
-        std::cerr<<"MEMORY ERROR: new opacity vector length is not equal to original. All classes are malloc-ed with fixed size, this assignment would lead to undefined behaviour.\n"
-        return (void)NULL;
-      }
-    }
+  void setKappa_nu(T* kappa_nu_temp){
     kappa_nu=kappa_nu_temp;
   }
   template<bool memSafe>
   void setLambda(std::vector<T> &lambda_temp){
     if constexpr(memSafe){
       if(lambda_temp.size()!=length){
-        std::cerr<<"MEMORY ERROR: new opacity vector length is not equal to original. All classes are malloc-ed with fixed size, this assignment would lead to undefined behaviour.\n"
+        std::cerr<<"MEMORY ERROR: new opacity vector length is not equal to original. All classes are malloc-ed with fixed size, this assignment would lead to undefined behaviour.\n";
         return (void)NULL;
       }
     }
