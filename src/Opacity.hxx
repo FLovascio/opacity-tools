@@ -274,7 +274,27 @@ public:
     rosseland /= integrals::computeIntegral(BKappa_nu, integral);
   };
   void setTemperature(T Temp){
-    
+    Temperature = Temp;
+  }
+  template<bool memSafe>
+  void setKappa_nu(std::vector<T> &kappa_nu_temp){
+    if constexpr(memSafe){
+      if(kappa_nu_temp.size()!=length){
+        std::cerr<<"MEMORY ERROR: new opacity vector length is not equal to original. All classes are malloc-ed with fixed size, this assignment would lead to undefined behaviour.\n"
+        return (void)NULL;
+      }
+    }
+    kappa_nu=kappa_nu_temp;
+  }
+  template<bool memSafe>
+  void setLambda(std::vector<T> &lambda_temp){
+    if constexpr(memSafe){
+      if(lambda_temp.size()!=length){
+        std::cerr<<"MEMORY ERROR: new opacity vector length is not equal to original. All classes are malloc-ed with fixed size, this assignment would lead to undefined behaviour.\n"
+        return (void)NULL;
+      }
+    }
+    lambda=lambda_temp;
   }
 };
 
