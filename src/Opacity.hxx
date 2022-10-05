@@ -3,9 +3,9 @@
 #include "Conductivity.hxx"
 #include "FileIO.hxx"
 #include "constants.hxx"
+#include "integrals.hxx"
 #include "roots.hxx"
 #include "utils.hxx"
-#include "integrals.hxx"
 #include <cmath>
 #include <complex>
 #include <functional>
@@ -220,8 +220,8 @@ template <class numType> numType B_nu(numType nu, numType T) {
 template <class numType> numType dBdT_nu(numType nu, numType T) {
   numType hnu = constants::h * nu;
   numType hnukt = hnu / (constants::k * T);
-  numType ehnukt =  exp(hnukt);
-  return hnukt/((constants::k * T)*(ehnukt-(numType)1.0))*ehnukt;
+  numType ehnukt = exp(hnukt);
+  return hnukt / ((constants::k * T) * (ehnukt - (numType)1.0)) * ehnukt;
 }
 
 template <class numType> numType B_lambda(numType lambda, numType T) {
@@ -235,43 +235,47 @@ template <class numType> numType dBdT_lambda(numType lambda, numType T) {
 }
 
 template <class T> class meanOpacity {
-  private:
-    std::vector<T> BKappa_nu;
-    std::vector<T> U_nu;
-  public:
-   std::vector<T> kappa_nu;
-   std::vector<T> lambda;
-   int length;
-   T planck;
-   T rosseland;
-   T Temperature;
-   meanOpacity(const std::vector<T> &k_in, const std::vector<T> &l_in,
-               T Temperature) {
-     kappa_nu = std::vector<T>(k_in);
-     lambda = std::vector<T>(l_in);
-     BKappa_nu = std::vector<T>((T)0.0,lambda.size());
-     int length = lambda.size(); 
-     planck = Planck();
-     rosseland = (T)0.0;
-   }
-   void Planck(){
-     for(int i=0;i<this->length;++i){
-       BKappa_nu[i]=kappa_nu[i]*B_lambda(lambda[i],Temperature);
-     }
-     integrals::CompositeSimpson<T> integral(lambda);
-     planck=integrals::computeIntegral(BKappa_nu,integral);
-   };
-   void Rosseland(){
-     for(int i=0;i<this->length;++i){
-       BKappa_nu[i]=dBdT_lambda(lambda[i],Temperature)/kappa_nu[i];
-     }
-     for(int i=0;i<this->length;++i){
-       U_nu[i]=dBdT_lambda(lambda[i],Temperature);
-     }
-     integrals::CompositeSimpson<T> integral(lambda);
-     rosseland=integrals::computeIntegral(U_nu,integral); 
-     rosseland/=integrals::computeIntegral(BKappa_nu,integral);
-   };
+private:
+  std::vector<T> BKappa_nu;
+  std::vector<T> U_nu;
+
+public:
+  std::vector<T> kappa_nu;
+  std::vector<T> lambda;
+  int length;
+  T planck;
+  T rosseland;
+  T Temperature;
+  meanOpacity(const std::vector<T> &k_in, const std::vector<T> &l_in,
+              T Temperature) {
+    kappa_nu = std::vector<T>(k_in);
+    lambda = std::vector<T>(l_in);
+    BKappa_nu = std::vector<T>((T)0.0, lambda.size());
+    int length = lambda.size();
+    planck = Planck();
+    rosseland = (T)0.0;
+  }
+  void Planck() {
+    for (int i = 0; i < this->length; ++i) {
+      BKappa_nu[i] = kappa_nu[i] * B_lambda(lambda[i], Temperature);
+    }
+    integrals::CompositeSimpson<T> integral(lambda);
+    planck = integrals::computeIntegral(BKappa_nu, integral);
+  };
+  void Rosseland() {
+    for (int i = 0; i < this->length; ++i) {
+      BKappa_nu[i] = dBdT_lambda(lambda[i], Temperature) / kappa_nu[i];
+    }
+    for (int i = 0; i < this->length; ++i) {
+      U_nu[i] = dBdT_lambda(lambda[i], Temperature);
+    }
+    integrals::CompositeSimpson<T> integral(lambda);
+    rosseland = integrals::computeIntegral(U_nu, integral);
+    rosseland /= integrals::computeIntegral(BKappa_nu, integral);
+  };
+  void setTemperature(T Temp){
+    
+  }
 };
 
 }; // namespace opacity
