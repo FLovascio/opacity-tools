@@ -54,6 +54,6 @@ There is currently no support for other languages, though a python wrapper is on
 - Grid CLI                            ❗️
 - Support for C and FORTRAN lib calls ✅
 - Python wrapper & numpy support      ❗️
-- Rosseland & Planck opacities        ❗️
+- Rosseland & Planck opacities        ✅ 
 - Percolated dust grains              ❗️
 - Interpolation                       ❗️
