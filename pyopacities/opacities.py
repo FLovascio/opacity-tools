@@ -27,3 +27,8 @@ class conductivity:
     return complex(lib.realConductivity(self.conductivity_pointer,i),lib.imagConductivity(self.conductivity_pointer,i))
   def get_lambda(self,i):
     return lib.lambdaValue(self.conductivity_pointer,i)
+  def __del__(self):
+    lib.deallocateConductivityObject(self.conductivity_pointer)
+    del(self.conductivity_pointer)
+class opacity:
+  def __init__(self,grainConductivities):
