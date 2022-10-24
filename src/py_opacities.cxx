@@ -21,7 +21,15 @@ conductivityObj buildConductivity(char *dir) {
           conductivity::readGrainFromSetup<double>(fileDir, 1e-4)));
   return (void*) thisGrain;
 }
-double lambda(conductivityObj grain, int i){
+double realConductivity(conductivityObj grain,int i){
+  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+  return thisGrain->sigma_eff_j[i].real();
+}
+double imagConductivity(conductivityObj grain,int i){
+  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+  return thisGrain->sigma_eff_j[i].imag();
+}
+double lambdaValue(conductivityObj grain, int i){
   conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
   return thisGrain->lambda_k[i]; 
 }

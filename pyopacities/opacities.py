@@ -21,4 +21,9 @@ class conductivity:
   def __init__(self,setupDir):
     dirString = setupDir.encode('utf-8')
     self.conductivity_pointer=lib.buildConductivity(ctypes.c_char_p(dirString))
-  def compute_conductivity(self)
+  def compute_conductivity(self):
+    lib.calculateConductivity(self.conductivity_pointer)
+  def get_conductivity(self,i):
+    return complex(lib.realConductivity(self.conductivity_pointer,i),lib.imagConductivity(self.conductivity_pointer,i))
+  def get_lambda(self,i):
+    return lib.lambdaValue(self.conductivity_pointer,i)
