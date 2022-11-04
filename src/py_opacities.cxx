@@ -19,11 +19,14 @@ conductivityObj buildConductivity(char *dir) {
   conductivity::mixedGrain<double> *thisGrain =
       new conductivity::mixedGrain<double>(std::move(
           conductivity::readGrainFromSetup<double>(fileDir, 1e-4)));
+  std::cout<<"C++ says: new grain at address " << (void*) thisGrain <<"\n"; 
   return (void*) thisGrain;
 }
 int getLen(conductivityObj grain){
   conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain); 
-  return thisGrain->sigma_eff_j.size();
+  std::cout<<"C++ says: reading length from "<<thisGrain<<"\n";
+  std::cout<<"C++ says: "<<thisGrain->lambda_k[112]<<"\n";
+  return thisGrain->lambda_k.size();
 }
 double realConductivity(conductivityObj grain,int i){
   conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
