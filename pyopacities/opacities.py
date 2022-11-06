@@ -44,19 +44,21 @@ class conductivity:
     get_lambda.restype=ctypes.c_void_p
     get_cond=lib.get_conductivities
     get_cond.restype=ctypes.c_void_p
+    get_delta=lib.get_delta
+    get_delta.restype=ctypes.c_void_p 
     self.conductivity_pointer=alocate(ctypes.c_char_p(dirString))
     lambdaPoint=get_lambda(ctypes.c_void_p(self.conductivity_pointer))
     condPoint=get_cond(ctypes.c_void_p(self.conductivity_pointer))
-    self.length=lib.getLen(ctypes.c_void_p(self.conductivity_pointer))
+    deltaPoint=get_delta(ctypes.c_void_p(self.conductivity_pointer))
+    self.nMaterials=lib.get_nmaterials(ctypes.c_void_p(self.conductivity_pointer))
+    self.length=lib.get_length(ctypes.c_void_p(self.conductivity_pointer))
     self.lambdas = make_nd_array(lambdaPoint, shape=(self.length,),dtype=np.float64,own_data=False) 
-    rawConductivities = make_nd_array(condPoint,shape=(2*self.length,),dtype=np.float64,own_data=False)
-    self.conductivities= rawConductivities[0::2]+1.0j*rawConductivities[1::2] 
+    self.rawConductivities = make_nd_array(condPoint,shape=(2*self.length,),dtype=np.float64,own_data=False)
+    self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
+    self.deltas= make_nd_array(deltaPoint,shape=(self.nMaterials,),dtype=np.float64,own_data=False)
   def compute_conductivity(self):
     lib.calculateConductivity(self.conductivity_pointer)
-  def get_conductivity(self,i):
-    return complex(lib.realConductivity(self.conductivity_pointer,i),lib.imagConductivity(self.conductivity_pointer,i))
-  def get_lambda(self,i):
-    return lib.lambdaValue(self.conductivity_pointer,i)
+    self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
   def __del__(self):
     lib.deallocateConductivityObject(ctypes.c_char_p(self.conductivity_pointer))
     del(self.conductivity_pointer)
@@ -77,12 +79,11 @@ class dustDistribution:
 class opacity:
   def __init__(self,length):
     self.opacity_data_pointer=libc.malloc((length * ctypes.sizeof(ctypes.c_double)))
-    self.data = np.ctypeslib.as_array(self.opacity_data_pointer,shape=(length,))
+    self.data = make_nd_array(self.opacity_data_pointer, shape=(length,),dtype=np.float64,own_data=False) 
     self.length=length
   def calculate_opacity(self,grainProperties,dustDistribution):
     lib.calculateOpacity(dustDistribution,grainProperties,self.opacity_data_pointer)
   def __del__(self):
-    del(self.data)
     libc.free(self.opacity_data_pointer, self.length * ctypes.sizeof(ctypes.c_double))
 
 opacity_import="success"

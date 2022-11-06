@@ -23,6 +23,10 @@ conductivityObj buildConductivity(char *dir) {
   //std::cout<<"C++ says: new object at address " << (unsigned long)thisGrain <<"\n"; 
   return (void*) thisGrain;
 }
+int get_nmaterials(conductivityObj grain){
+    conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+  return thisGrain->delta_i.size(); 
+}
 void* get_conductivities(conductivityObj grain){
   conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
   return (void *)thisGrain->sigma_eff_j.data();
@@ -31,7 +35,11 @@ void* get_lambda(conductivityObj grain){
   conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
   return (void *)thisGrain->lambda_k.data();
 }
-int getLen(conductivityObj grain){
+void* get_delta(conductivityObj grain){
+  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+  return (void *)thisGrain->delta_i.data();
+}
+int get_length(conductivityObj grain){
   conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain); 
   //std::cout<<"C++ says: reading length from "<<thisGrain<<"\n";
   //std::cout<<"C++ says: reading length from "<< (unsigned long)thisGrain<<"\n";
