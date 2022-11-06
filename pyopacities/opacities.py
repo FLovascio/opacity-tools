@@ -58,8 +58,8 @@ class conductivity:
   def get_lambda(self,i):
     return lib.lambdaValue(self.conductivity_pointer,i)
   def __del__(self):
-    lib.deallocateConductivityObject(self.conductivity_pointer)
-    #del(self.conductivity_pointer)
+    lib.deallocateConductivityObject(ctypes.c_char_p(self.conductivity_pointer))
+    del(self.conductivity_pointer)
 class dustDistribution:
   def __init__(self,grainSize,sizeDensity):
     self.length=len(grainSize)
