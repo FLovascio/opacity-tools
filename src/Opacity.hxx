@@ -168,6 +168,7 @@ void KappaDust_fast_Array(T *output, conductivity::mixedGrain<T> &grain,
   T HVar = 0.0;
   // std::cout<<"looping "<<grain.lambda_k.size()<<" times\n";
   for (int k = 0; k < grain.lambda_k.size(); ++k) {
+    output[k]=fillValue;
     lambda = grain.lambda_k[k];
     e1Var = e1(grain.sigma_eff_j[k]);
     e2Var = e2(grain.sigma_eff_j[k]);
