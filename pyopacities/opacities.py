@@ -55,10 +55,12 @@ class conductivity:
     self.lambdas = make_nd_array(lambdaPoint, shape=(self.length,),dtype=np.float64,own_data=False) 
     self.rawConductivities = make_nd_array(condPoint,shape=(2*self.length,),dtype=np.float64,own_data=False)
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
+    self.conductivities.setflags(write=False)
     self.deltas= make_nd_array(deltaPoint,shape=(self.nMaterials,),dtype=np.float64,own_data=False)
   def compute_conductivity(self):
     lib.calculateConductivity(self.conductivity_pointer)
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
+    self.conductivities.setflags(write=False)
   def __del__(self):
     lib.deallocateConductivityObject(ctypes.c_char_p(self.conductivity_pointer))
     del(self.conductivity_pointer)
