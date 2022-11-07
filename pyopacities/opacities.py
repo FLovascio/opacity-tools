@@ -18,7 +18,7 @@ elif platform.system()=='Windows':
   warnings.warn("Windows is not tested, the package may not work, or worse, quietly do the wrong thing.")
 
 libc = ctypes.CDLL(find_library('c'))
-libc.malloc.restype = ctypes.c_void_p
+#libc.malloc.restype = ctypes.c_void_p
 
 cdll.LoadLibrary('./'+lib_name)
 lib = ctypes.CDLL('./'+lib_name)
@@ -64,26 +64,38 @@ class conductivity:
     del(self.conductivity_pointer)
 class dustDistribution:
   def __init__(self,grainSize,sizeDensity):
+    alocate=lib.makeDustDist
+    alocate.restype=ctypes.c_void_p
     self.length=len(grainSize)
-    self.dust_object=lib.makeDustDist(grainSize.ctypes.data_as(ctypes.c_void_p),sizeDensity.ctypes.data_as(ctypes.c_void_p),self.length)
+    self.dust_object=alocate(grainSize.ctypes.data_as(ctypes.c_void_p),sizeDensity.ctypes.data_as(ctypes.c_void_p),self.length)
   def set_grainSize(self,grainSize):
     if self.length==len(grainSize):
-      lib.setDustSize(grainSize.ctypes.data_as(ctypes.c_void_p), self.dust_object, self.length)
+      lib.setDustSize(grainSize.ctypes.data_as(ctypes.c_void_p), ctypes.c_void_p(self.dust_object), self.length)
     else:
       raise ValueError("array lengths don't match, do you want to segfault? \nMake a new object instead or use an array of the same length as the one used to init the object.")
   def set_sizeDensity(self,sizeDensity):
     if self.length==len(sizeDensity):
-      lib.setDensity(sizeDensity.ctypes.data_as(ctypes.c_void_p), self.dust_object, self.length)
+      lib.setDensity(sizeDensity.ctypes.data_as(ctypes.c_void_p), ctypes.c_void_p(self.dust_object), self.length)
     else:
       raise ValueError("array lengths don't match, do you want to segfault? \nMake a new object instead or use an array of the same length as the one used to init the object.")
+  def __del__(self):
+    lib.deallocateDust(ctypes.c_void_p(self.dust_object))
+    del(self.dust_object)
+    del(self.length)
 class opacity:
-  def __init__(self,length):
-    self.opacity_data_pointer=libc.malloc((length * ctypes.sizeof(ctypes.c_double)))
-    self.data = make_nd_array(self.opacity_data_pointer, shape=(length,),dtype=np.float64,own_data=False) 
+  def __init__(self,length,buffer=16):
+    alocate=libc.calloc
+    #alocate=libc.malloc
+    alocate.restype=ctypes.c_void_p
+    self.buffer=buffer
+    self.opacity_data_pointer=alocate(length+buffer,ctypes.sizeof(ctypes.c_double))
+    #self.opacity_data_pointer=alocate((length+buffer)*ctypes.sizeof(ctypes.c_double))
+    self.data = make_nd_array(ctypes.c_void_p(self.opacity_data_pointer),shape=(length,),dtype=np.float64,own_data=False)#np.ctypeslib.as_array(self.opacity_data_pointer,shape=(length,))
     self.length=length
   def calculate_opacity(self,grainProperties,dustDistribution):
-    lib.calculateOpacity(dustDistribution,grainProperties,self.opacity_data_pointer)
+    lib.calculateOpacity(ctypes.c_void_p(dustDistribution.dust_object),ctypes.c_void_p(grainProperties.conductivity_pointer),ctypes.c_void_p(self.opacity_data_pointer))
+    self.data = make_nd_array(ctypes.c_void_p(self.opacity_data_pointer),shape=(self.length,),dtype=np.float64,own_data=False)
   def __del__(self):
-    libc.free(self.opacity_data_pointer, self.length * ctypes.sizeof(ctypes.c_double))
+    libc.free(ctypes.c_void_p(self.opacity_data_pointer), (self.buffer+self.length) * ctypes.sizeof(ctypes.c_double))
 
 opacity_import="success"

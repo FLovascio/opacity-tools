@@ -46,7 +46,7 @@ public:
     dustSizeBins = std::move(std::vector<T>(s, s + len));
     dustSizeDensity = std::move(std::vector<T>(rho, rho + len));
     smin = dustSizeBins[0];
-    smax = dustSizeBins[dustSizeBins.size()];
+    smax = dustSizeBins[dustSizeBins.size()-1];
     nbin = dustSizeBins.size();
     rhograin = 3.0;
   }
