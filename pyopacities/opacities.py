@@ -58,7 +58,7 @@ class conductivity:
     self.conductivities.setflags(write=False)
     self.deltas= make_nd_array(deltaPoint,shape=(self.nMaterials,),dtype=np.float64,own_data=False)
   def compute_conductivity(self):
-    lib.calculateConductivity(self.conductivity_pointer)
+    lib.calculateConductivity(ctypes.c_void_p(self.conductivity_pointer))
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
     self.conductivities.setflags(write=False)
   def __del__(self):
@@ -86,13 +86,13 @@ class dustDistribution:
     del(self.length)
 class opacity:
   def __init__(self,length,buffer=16):
-    alocate=libc.calloc
-    #alocate=libc.malloc
+    #alocate=libc.calloc
+    alocate=libc.malloc
     alocate.restype=ctypes.c_void_p
     self.buffer=buffer
-    self.opacity_data_pointer=alocate(length+buffer,ctypes.sizeof(ctypes.c_double))
-    #self.opacity_data_pointer=alocate((length+buffer)*ctypes.sizeof(ctypes.c_double))
-    self.data = make_nd_array(ctypes.c_void_p(self.opacity_data_pointer),shape=(length,),dtype=np.float64,own_data=False)#np.ctypeslib.as_array(self.opacity_data_pointer,shape=(length,))
+    #self.opacity_data_pointer=alocate(length+buffer,ctypes.sizeof(ctypes.c_double))
+    self.opacity_data_pointer=alocate((length+buffer)*ctypes.sizeof(ctypes.c_double))
+    self.data = make_nd_array(ctypes.c_void_p(self.opacity_data_pointer),shape=(length,),dtype=np.float64,own_data=False)
     self.length=length
   def calculate_opacity(self,grainProperties,dustDistribution):
     lib.calculateOpacity(ctypes.c_void_p(dustDistribution.dust_object),ctypes.c_void_p(grainProperties.conductivity_pointer),ctypes.c_void_p(self.opacity_data_pointer))
