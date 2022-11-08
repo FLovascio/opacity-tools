@@ -53,7 +53,7 @@ There is currently no support for other languages, though a python wrapper is on
 - CLI for basic opacity features      ✅
 - Grid CLI                            ❗️
 - Support for C and FORTRAN lib calls ✅
-- Python wrapper & numpy support      ❗️
+- Python wrapper & numpy support      ✅ 
 - Rosseland & Planck opacities        ✅ 
 - Percolated dust grains              ❗️
 - Interpolation                       ❗️
