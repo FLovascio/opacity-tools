@@ -36,6 +36,42 @@ public:
   }
 };
 
+template <class T> class coatedGrain {
+public:
+  std::vector<T> lambda_k;
+  std::vector<std::complex<T>> sigmaHollowSphere_k;
+  std::vector<std::complex<T>> sigmaInnerSphere_k;
+  std::vector<std::complex<T>> sigma_eff_k;
+  T r1;
+  T r2;
+  coatedGrain(std::vector<T> lambda_k_,
+               std::vector<std::complex<T>> sigmaHollowSphere_k_,
+               std::vector<std::complex<T>> sigmaInnerSphere_k_, T r1_, T r2_) {
+    lambda_k = lambda_k_;
+    sigmaHollowSphere_k = sigmaHollowSphere_k_;
+    sigmaInnerSphere_k = sigmaInnerSphere_k_;
+    sigma_eff_k = sigmaInnerSphere_k_;
+    r1 = r1_;
+    r2 = r2_;
+  }
+  coatedGrain(mixedGrain<T>&inner_,mixedGrain<T>&outer_, T r1_, T r2_){
+    lambda_k = inner_.lambda_k;
+    sigmaHollowSphere_k=outer_.sigma_eff_j;
+    sigmaInnerSphere_k=inner_.sigma_eff_j;
+    sigma_eff_k=outer_.sigma_eff_j;
+    r1=r1_;
+    r2=r2_;
+  }
+  coatedGrain(mixedGrain<T>*inner_,mixedGrain<T>*outer_, T r1_, T r2_){
+    lambda_k = inner_->lambda_k;
+    sigmaHollowSphere_k=outer_->sigma_eff_j;
+    sigmaInnerSphere_k=inner_->sigma_eff_j;
+    sigma_eff_k=outer_->sigma_eff_j;
+    r1=r1_;
+    r2=r2_;
+  }
+};
+
 template <class T>
 std::complex<T> BrugemannSumFunction(std::complex<T> sigma_eff, int lambda_k_i,
                                      const mixedGrain<T> &grain) {
@@ -65,6 +101,19 @@ std::complex<T> BrugemannSumDerivativeFunction(std::complex<T> sigma_eff,
                   (grain.sigma_ij[i][lambda_k_i] + (n_minus_1 * sigma_eff)));
   }
   return sum_value;
+}
+
+template <class T> void coatedGrainConductivity(coatedGrain<T> &grain, int i) {
+  grain.sigma_eff_k[i] =
+      grain.sigmaHollowSphere_k[i] *
+      ((grain.r2 * grain.r2 * grain.r2) *
+           (grain.sigmaInnerSphere_k[i] + 2.0 * grain.sigmaHollowSphere_k[i]) +
+       2.0 * (grain.r1 * grain.r1 * grain.r1) *
+           (grain.sigmaInnerSphere_k[i] - grain.sigmaHollowSphere_k[i])) /
+      ((grain.r2 * grain.r2 * grain.r2) *
+           (grain.sigmaInnerSphere_k[i] + 2.0 * grain.sigmaHollowSphere_k[i]) -
+       (grain.r1 * grain.r1 * grain.r1) *
+           (grain.sigmaInnerSphere_k[i] - grain.sigmaHollowSphere_k[i]));
 }
 
 template <class T>
@@ -136,6 +185,12 @@ template <class T> void solveSystem(mixedGrain<T> &grain) {
     grain.sigma_eff_j[i] = complexRootFind::solve<T, int>(
         current_best_guess, 1e-8, BrugemannSum, BrugemannSumDerivative, i);
     current_best_guess = grain.sigma_eff_j[i];
+  }
+}
+
+template <class T> void solveSystem(coatedGrain<T> &grain) {
+  for (int i = 0; i < grain.lambda_k.size(); ++i) {
+    coatedGrainConductivity(grain, i);
   }
 }
 
