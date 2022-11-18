@@ -11,6 +11,7 @@ typedef void* meanOpacity;
 typedef void* conductivityObj;
 typedef void *mixedGrainPointer;
 typedef void *coatedGrainPointer;
+typedef void *grainHandlerPointer;
 
 // general methods
 void conductivitiesHelp(){
@@ -111,6 +112,16 @@ void deleteCoatedGrain(coatedGrainPointer grain) {
   auto *thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
   delete thisGrain;
 }
+grainHandlerPointer mixedGrainHandler(mixedGrainPointer grain){
+  auto thisGrain = static_cast<conductivity::mixedGrain<double> *>(grain);
+  auto handler=new conductivity::grainHandler<double>(*thisGrain); 
+  return (grainHandlerPointer) handler;
+}
+grainHandlerPointer coatedGrainHandler(coatedGrainPointer grain){
+  auto thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
+  auto handler=new conductivity::grainHandler<double>(*thisGrain); 
+  return (grainHandlerPointer) handler;
+}
 // dust distribution methods
 dustDist makeDustDist(double* size, double* density, int len){
   auto dustDistribution=new dust::dustDistribution<double>(std::move(dust::dustDistribution<double>(size,density, len)));
@@ -129,9 +140,9 @@ void setDensity(double* density, dustDist distribution,int len){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 
   thisDistribution->dustSizeDensity=std::vector<double>(density,density+len);
 }
-void calculateOpacity(dustDist distribution,conductivityObj grain,double* opacities){
+void calculateOpacity(dustDist distribution,grainHandlerPointer grain,double* opacities){
   dust::dustDistribution<double> &thisDistribution = *static_cast<dust::dustDistribution<double> *> (distribution); 
-  conductivity::mixedGrain<double> &thisGrain = *static_cast<conductivity::mixedGrain<double> *> (grain); 
+  conductivity::grainHandler<double> &thisGrain = *static_cast<conductivity::grainHandler<double> *> (grain); 
   opacity::KappaDust_fast_Array<double>(opacities, thisGrain, thisDistribution);  
 }
 void deallocateDust(dustDist distribution){

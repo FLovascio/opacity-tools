@@ -34,6 +34,37 @@ def make_nd_array(c_pointer, shape, dtype=np.float64, order='C', own_data=True):
     return arr.copy()
   else:
     return arr
+
+class mixedGrain:
+  def __init__(self,setupDir):
+    dirString = setupDir.encode('utf-8')
+    #print("Python says: reading from:"+setupDir)
+    alocate=lib.makeMixedGrain()
+    alocate.restype=ctypes.c_void_p
+    get_lambda=lib.get_lambdaMixed
+    get_lambda.restype=ctypes.c_void_p
+    get_cond=lib.get_conductivitiesMixed
+    get_cond.restype=ctypes.c_void_p
+    get_delta=lib.get_delta
+    get_delta.restype=ctypes.c_void_p 
+    self.conductivity_pointer=alocate(ctypes.c_char_p(dirString))
+    lambdaPoint=get_lambda(ctypes.c_void_p(self.conductivity_pointer))
+    condPoint=get_cond(ctypes.c_void_p(self.conductivity_pointer))
+    deltaPoint=get_delta(ctypes.c_void_p(self.conductivity_pointer))
+    self.nMaterials=lib.get_nmaterials(ctypes.c_void_p(self.conductivity_pointer))
+    self.length=lib.get_lengthMixed(ctypes.c_void_p(self.conductivity_pointer))
+    self.lambdas = make_nd_array(lambdaPoint, shape=(self.length,),dtype=np.float64,own_data=False) 
+    self.rawConductivities = make_nd_array(condPoint,shape=(2*self.length,),dtype=np.float64,own_data=False)
+    self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
+    self.conductivities.setflags(write=False)
+    self.deltas= make_nd_array(deltaPoint,shape=(self.nMaterials,),dtype=np.float64,own_data=False)
+  def compute_conductivity(self):
+    lib.calculateConductivity(ctypes.c_void_p(self.conductivity_pointer))
+    self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
+    self.conductivities.setflags(write=False)
+  def __del__(self):
+    lib.deallocateConductivityObject(ctypes.c_char_p(self.conductivity_pointer))
+    del(self.conductivity_pointer) 
 class conductivity:
   def __init__(self,setupDir):
     dirString = setupDir.encode('utf-8')

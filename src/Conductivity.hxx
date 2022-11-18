@@ -73,26 +73,19 @@ public:
 };
 
 template<class T>
-struct grainHandler{
+class grainHandler{
+public:
   std::vector<T> lambda_k; 
   std::vector<std::complex<T>> sigma_k;
+  grainHandler(mixedGrain<T>& grain_){
+    this->lambda_k=grain_.lambda_k;
+    this->sigma_k=grain_.sigma_eff_j;
+  }
+  grainHandler(coatedGrain<T>& grain_){
+    this->grain.lambda_k=grain_.lambda_k;
+    this->grain.sigma_k=grain_.sigma_eff_k;
+  }
 };
-
-template<class T>
-grainHandler<T> toGrainHandler(mixedGrain<T>& grain_){
-  grainHandler<T> grain;
-  grain.lambda_k=grain_.lambda_k;
-  grain.sigma_k=grain_.sigma_eff_j;
-  return grain;
-}
-
-template<class T>
-grainHandler<T> toGrainHandler(coatedGrain<T>& grain_){
-  grainHandler<T> grain;
-  grain.lambda_k=grain_.lambda_k;
-  grain.sigma_k=grain_.sigma_eff_k;
-  return grain;
-}
 
 template <class T>
 std::complex<T> BrugemannSumFunction(std::complex<T> sigma_eff, int lambda_k_i,
