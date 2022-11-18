@@ -72,6 +72,10 @@ void addLayer(coatedGrainPointer grain, mixedGrainPointer coating_, double thick
   thisGrain->sigmaHollowSphere_k=coating->sigma_eff_j;
   conductivity::solveSystem(*thisGrain);
 }
+void deleteCoatedGrain(coatedGrainPointer grain) {
+  auto *thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
+  delete thisGrain;
+}
 // legacy methods
 void calculateConductivity(conductivityObj grain) {
   conductivity::mixedGrain<double> *thisGrain =
@@ -80,10 +84,6 @@ void calculateConductivity(conductivityObj grain) {
 }
 conductivityObj buildConductivity(char *dir) { // legacy method
   std::string fileDir = std::string(dir);
-  // fileDir.erase(std::remove_if(std::begin(fileDir), std::end(fileDir),
-  // [](unsigned char x) { return std::isspace(x); }), std::end(fileDir));
-  // fileDir.erase(std::remove_if(std::begin(fileDir), std::end(fileDir),
-  // [](unsigned char x) { return x=='\x01'; }), std::end(fileDir));
   conductivity::mixedGrain<double> *thisGrain =
       new conductivity::mixedGrain<double>(
           std::move(conductivity::readGrainFromSetup<double>(fileDir, 1e-4)));

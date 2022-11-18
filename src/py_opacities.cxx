@@ -9,59 +9,109 @@ typedef void* conductivityObj;
 typedef void* opacityVector;
 typedef void* meanOpacity;
 typedef void* conductivityObj;
+typedef void *mixedGrainPointer;
+typedef void *coatedGrainPointer;
 
-void calculateConductivity(conductivityObj grain) {
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+// general methods
+void conductivitiesHelp(){
+  std::cout<<"Info for grain types:"<<"\n"<<
+  "mixedGrain: homogeneous grain made of mixed materials,\n effective medium approximation is calculated by Breugmann theory" << "\n\n" <<
+  "coatedGrain: grain with a mantle, \n effective medium approximation is calculated using hollow sphere equivalent\n";
+}
+// mixedGrain methods
+mixedGrainPointer makeMixedGrain(char *dir) {
+  // New constructor function also computes effective conductivity in call. I
+  // see no reason not to and this should avoid some issues.
+  std::string fileDir = std::string(dir);
+  auto *thisGrain = new conductivity::mixedGrain<double>(
+      std::move(conductivity::readGrainFromSetup<double>(fileDir, 1e-4)));
+  conductivity::solveSystem<double>(*thisGrain);
+  return (mixedGrainPointer)thisGrain;
+}
+void solveBreugmannSystem(mixedGrainPointer grain) {
+  auto thisGrain = static_cast<conductivity::mixedGrain<double> *>(grain);
   conductivity::solveSystem<double>(*thisGrain);
 }
-conductivityObj buildConductivity(char *dir) {
-  std::string fileDir=std::string(dir);
-  conductivity::mixedGrain<double> *thisGrain =
-      new conductivity::mixedGrain<double>(std::move(
-          conductivity::readGrainFromSetup<double>(fileDir, 1e-4)));
-  //std::cout<<"C++ says: new object at address " << thisGrain <<"\n"; 
-  //std::cout<<"C++ says: new object at address " << (unsigned long)thisGrain <<"\n"; 
-  return (void*) thisGrain;
-}
-int get_nmaterials(conductivityObj grain){
-    conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+int get_nmaterials(mixedGrainPointer grain){
+    auto thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
   return thisGrain->delta_i.size(); 
 }
-void* get_conductivities(conductivityObj grain){
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+void* get_conductivitiesMixed(mixedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
   return (void *)thisGrain->sigma_eff_j.data();
 }
-void* get_lambda(conductivityObj grain){
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+void* get_lambdaMixed(mixedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
   return (void *)thisGrain->lambda_k.data();
 }
-void* get_delta(conductivityObj grain){
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+void* get_delta(mixedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
   return (void *)thisGrain->delta_i.data();
 }
-int get_length(conductivityObj grain){
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain); 
-  //std::cout<<"C++ says: reading length from "<<thisGrain<<"\n";
-  //std::cout<<"C++ says: reading length from "<< (unsigned long)thisGrain<<"\n";
-  //std::cout<<"C++ says: "<<thisGrain->lambda_k[112]<<"\n";
+int get_lengthMixed(mixedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
   return thisGrain->lambda_k.size();
 }
-double realConductivity(conductivityObj grain,int i){
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
-  return thisGrain->sigma_eff_j[i].real();
-}
-double imagConductivity(conductivityObj grain,int i){
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
-  return thisGrain->sigma_eff_j[i].imag();
-}
-double lambdaValue(conductivityObj grain, int i){
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
-  return thisGrain->lambda_k[i]; 
-}
-void deallocateConductivityObject(conductivityObj grain){
-  conductivity::mixedGrain<double> *thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain); 
+void deleteMixedGrain(mixedGrainPointer grain) {
+  auto *thisGrain = static_cast<conductivity::mixedGrain<double> *>(grain);
   delete thisGrain;
 }
+// coatedGrain methods
+coatedGrainPointer makeCoatedGrain(mixedGrainPointer inner_,
+                                   mixedGrainPointer outer_, double r1_,
+                                   double r2_) {
+  auto inner = static_cast<conductivity::mixedGrain<double> *>(inner_);
+  auto outer = static_cast<conductivity::mixedGrain<double> *>(outer_);
+  auto thisGrain =
+      new conductivity::coatedGrain<double>(inner, outer, r1_, r2_);
+  conductivity::solveSystem<double>(*thisGrain);
+  return (coatedGrainPointer)thisGrain;
+}
+void solveCoatedGrainSystem(coatedGrainPointer grain) {
+  auto thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
+  conductivity::solveSystem<double>(*thisGrain);
+}
+void setOuter(coatedGrainPointer grain, mixedGrainPointer outer_, double r1_,
+              double r2_) {
+  auto outer = static_cast<conductivity::mixedGrain<double> *>(outer_);
+  auto thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
+  thisGrain->sigmaHollowSphere_k = outer->sigma_eff_j;
+  thisGrain->r1 = r1_;
+  thisGrain->r2 = r2_;
+}
+void setInner(coatedGrainPointer grain, mixedGrainPointer inner_, double r1_,
+              double r2_) {
+  auto inner = static_cast<conductivity::mixedGrain<double> *>(inner_);
+  auto thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
+  thisGrain->sigmaHollowSphere_k = inner->sigma_eff_j;
+  thisGrain->r1 = r1_;
+  thisGrain->r2 = r2_;
+}
+void addLayer(coatedGrainPointer grain, mixedGrainPointer coating_, double thickness) {
+  auto coating = static_cast<conductivity::mixedGrain<double> *>(coating_);
+  auto thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
+  thisGrain->r1 = thisGrain->r2; 
+  thisGrain->r2 = thisGrain->r1+thickness; 
+  thisGrain->sigmaHollowSphere_k=coating->sigma_eff_j;
+  conductivity::solveSystem(*thisGrain);
+}
+void* get_conductivitiesCoated(mixedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::coatedGrain<double> *>(grain);
+  return (void *)thisGrain->sigma_eff_k.data();
+}
+int get_lengthCoated(mixedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+  return thisGrain->lambda_k.size();
+}
+void* get_lambdaCoated(mixedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedGrain<double> *>(grain);
+  return (void *)thisGrain->lambda_k.data();
+}
+void deleteCoatedGrain(coatedGrainPointer grain) {
+  auto *thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
+  delete thisGrain;
+}
+// dust distribution methods
 dustDist makeDustDist(double* size, double* density, int len){
   auto dustDistribution=new dust::dustDistribution<double>(std::move(dust::dustDistribution<double>(size,density, len)));
   return (void*) dustDistribution;
