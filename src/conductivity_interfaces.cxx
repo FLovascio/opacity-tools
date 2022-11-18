@@ -8,6 +8,7 @@ extern "C" {
 typedef void *conductivityObj;
 typedef void *mixedGrainPointer;
 typedef void *coatedGrainPointer;
+typedef void *grainHandlerPointer;
 
 // general methods
 void conductivitiesHelp(){
@@ -76,6 +77,7 @@ void deleteCoatedGrain(coatedGrainPointer grain) {
   auto *thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
   delete thisGrain;
 }
+
 // legacy methods
 void calculateConductivity(conductivityObj grain) {
   conductivity::mixedGrain<double> *thisGrain =
