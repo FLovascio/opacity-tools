@@ -42,8 +42,8 @@ public:
   std::vector<std::complex<T>> sigmaHollowSphere_k;
   std::vector<std::complex<T>> sigmaInnerSphere_k;
   std::vector<std::complex<T>> sigma_eff_k;
-  T r1;
-  T r2;
+  T r1; //inner radius
+  T r2; //outer radius
   coatedGrain(std::vector<T> lambda_k_,
                std::vector<std::complex<T>> sigmaHollowSphere_k_,
                std::vector<std::complex<T>> sigmaInnerSphere_k_, T r1_, T r2_) {
