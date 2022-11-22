@@ -75,16 +75,10 @@ public:
 template<class T>
 class grainHandler{
 public:
-  std::vector<T> lambda_k; 
-  std::vector<std::complex<T>> sigma_k;
-  grainHandler(mixedGrain<T>& grain_){
-    this->lambda_k=grain_.lambda_k;
-    this->sigma_k=grain_.sigma_eff_j;
-  }
-  grainHandler(coatedGrain<T>& grain_){
-    this->grain.lambda_k=grain_.lambda_k;
-    this->grain.sigma_k=grain_.sigma_eff_k;
-  }
+  std::vector<T> &lambda_k; 
+  std::vector<std::complex<T>> &sigma_k;
+  grainHandler(mixedGrain<T>& grain_):lambda_k(grain_.lambda_k),sigma_k(grain_.sigma_eff_j){;}
+  grainHandler(coatedGrain<T>& grain_):lambda_k(grain_.lambda_k),sigma_k(grain_.sigma_eff_k){;}
 };
 
 template <class T>

@@ -112,6 +112,7 @@ void deleteCoatedGrain(coatedGrainPointer grain) {
   auto *thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
   delete thisGrain;
 }
+// Grain handler
 grainHandlerPointer mixedGrainHandler(mixedGrainPointer grain){
   auto thisGrain = static_cast<conductivity::mixedGrain<double> *>(grain);
   auto handler=new conductivity::grainHandler<double>(*thisGrain); 

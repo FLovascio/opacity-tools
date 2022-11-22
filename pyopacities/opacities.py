@@ -34,67 +34,67 @@ def make_nd_array(c_pointer, shape, dtype=np.float64, order='C', own_data=True):
     return arr.copy()
   else:
     return arr
-
 class mixedGrain:
   def __init__(self,setupDir):
     dirString = setupDir.encode('utf-8')
-    #print("Python says: reading from:"+setupDir)
-    alocate=lib.makeMixedGrain()
+    alocate=lib.makeMixedGrain
     alocate.restype=ctypes.c_void_p
+    get_handler=lib.mixedGrainHandler
+    get_handler.restype=ctypes.c_void_p
     get_lambda=lib.get_lambdaMixed
     get_lambda.restype=ctypes.c_void_p
     get_cond=lib.get_conductivitiesMixed
     get_cond.restype=ctypes.c_void_p
     get_delta=lib.get_delta
-    get_delta.restype=ctypes.c_void_p 
-    self.conductivity_pointer=alocate(ctypes.c_char_p(dirString))
-    lambdaPoint=get_lambda(ctypes.c_void_p(self.conductivity_pointer))
-    condPoint=get_cond(ctypes.c_void_p(self.conductivity_pointer))
-    deltaPoint=get_delta(ctypes.c_void_p(self.conductivity_pointer))
-    self.nMaterials=lib.get_nmaterials(ctypes.c_void_p(self.conductivity_pointer))
-    self.length=lib.get_lengthMixed(ctypes.c_void_p(self.conductivity_pointer))
+    get_delta.restype=ctypes.c_void_p
+    self.grain_pointer=alocate(ctypes.c_char_p(dirString))
+    lambdaPoint=get_lambda(ctypes.c_void_p(self.grain_pointer))
+    condPoint=get_cond(ctypes.c_void_p(self.grain_pointer))
+    deltaPoint=get_delta(ctypes.c_void_p(self.grain_pointer))
+    self.nMaterials=lib.get_nmaterials(ctypes.c_void_p(self.grain_pointer))
+    self.length=lib.get_lengthMixed(ctypes.c_void_p(self.grain_pointer))
     self.lambdas = make_nd_array(lambdaPoint, shape=(self.length,),dtype=np.float64,own_data=False) 
     self.rawConductivities = make_nd_array(condPoint,shape=(2*self.length,),dtype=np.float64,own_data=False)
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
     self.conductivities.setflags(write=False)
     self.deltas= make_nd_array(deltaPoint,shape=(self.nMaterials,),dtype=np.float64,own_data=False)
+    self.handler=get_handler(self.grain_pointer)
   def compute_conductivity(self):
-    lib.calculateConductivity(ctypes.c_void_p(self.conductivity_pointer))
+    lib.calculateConductivity(ctypes.c_void_p(self.grain_pointer))
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
     self.conductivities.setflags(write=False)
   def __del__(self):
-    lib.deallocateConductivityObject(ctypes.c_char_p(self.conductivity_pointer))
-    del(self.conductivity_pointer) 
-class conductivity:
-  def __init__(self,setupDir):
-    dirString = setupDir.encode('utf-8')
-    #print("Python says: reading from:"+setupDir)
-    alocate=lib.buildConductivity
+    lib.deleteMixedGrain(ctypes.c_char_p(self.grain_pointer))
+    del(self.grain_pointer) 
+class coatedGrain:
+  def __init__(self,core,shell,r1,r2):
+    alocate=lib.makeCoatedGrain
     alocate.restype=ctypes.c_void_p
-    get_lambda=lib.get_lambda
+    get_lambda=lib.get_lambdaCoated
     get_lambda.restype=ctypes.c_void_p
-    get_cond=lib.get_conductivities
+    get_handler=lib.coatedGrainHandler
+    get_handler.restype=ctypes.c_void_p
+    get_cond=lib.get_conductivitiesCoated
     get_cond.restype=ctypes.c_void_p
-    get_delta=lib.get_delta
-    get_delta.restype=ctypes.c_void_p 
-    self.conductivity_pointer=alocate(ctypes.c_char_p(dirString))
-    lambdaPoint=get_lambda(ctypes.c_void_p(self.conductivity_pointer))
-    condPoint=get_cond(ctypes.c_void_p(self.conductivity_pointer))
-    deltaPoint=get_delta(ctypes.c_void_p(self.conductivity_pointer))
-    self.nMaterials=lib.get_nmaterials(ctypes.c_void_p(self.conductivity_pointer))
-    self.length=lib.get_length(ctypes.c_void_p(self.conductivity_pointer))
+    self.grain_pointer=alocate(ctypes.c_void_p(core.grain_pointer),ctypes.c_void_p(shell.grain_pointer),ctypes.c_double(r1),ctypes.c_double(r2))
+    lambdaPoint=get_lambda(ctypes.c_void_p(self.grain_pointer))
+    condPoint=get_cond(ctypes.c_void_p(self.grain_pointer))
+    self.length=lib.get_lengthCoated(ctypes.c_void_p(self.grain_pointer))
     self.lambdas = make_nd_array(lambdaPoint, shape=(self.length,),dtype=np.float64,own_data=False) 
     self.rawConductivities = make_nd_array(condPoint,shape=(2*self.length,),dtype=np.float64,own_data=False)
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
     self.conductivities.setflags(write=False)
-    self.deltas= make_nd_array(deltaPoint,shape=(self.nMaterials,),dtype=np.float64,own_data=False)
+    self.handler=get_handler(self.grain_pointer)
+  def add_layer(self,shell,thickness):
+    addLayer=lib.addLayer
+    addLayer(ctypes.c_void_p(self.grain_pointer),ctypes.c_void_p(shell.grain_pointer),ctypes.c_double(thickness)) 
   def compute_conductivity(self):
-    lib.calculateConductivity(ctypes.c_void_p(self.conductivity_pointer))
+    lib.calculateConductivity(ctypes.c_void_p(self.grain_pointer))
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
     self.conductivities.setflags(write=False)
   def __del__(self):
-    lib.deallocateConductivityObject(ctypes.c_char_p(self.conductivity_pointer))
-    del(self.conductivity_pointer)
+    lib.deleteCoatedGrain(ctypes.c_char_p(self.grain_pointer))
+    del(self.grain_pointer)
 class dustDistribution:
   def __init__(self,grainSize,sizeDensity):
     alocate=lib.makeDustDist
@@ -126,7 +126,7 @@ class opacity:
     self.data = make_nd_array(ctypes.c_void_p(self.opacity_data_pointer),shape=(length,),dtype=np.float64,own_data=False)
     self.length=length
   def calculate_opacity(self,grainProperties,dustDistribution):
-    lib.calculateOpacity(ctypes.c_void_p(dustDistribution.dust_object),ctypes.c_void_p(grainProperties.conductivity_pointer),ctypes.c_void_p(self.opacity_data_pointer))
+    lib.calculateOpacity(ctypes.c_void_p(dustDistribution.dust_object),ctypes.c_void_p(grainProperties.handler),ctypes.c_void_p(self.opacity_data_pointer))
     self.data = make_nd_array(ctypes.c_void_p(self.opacity_data_pointer),shape=(self.length,),dtype=np.float64,own_data=False)
   def __del__(self):
     libc.free(ctypes.c_void_p(self.opacity_data_pointer), (self.buffer+self.length) * ctypes.sizeof(ctypes.c_double))
