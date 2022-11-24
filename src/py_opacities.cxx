@@ -116,6 +116,8 @@ void deleteCoatedGrain(coatedGrainPointer grain) {
 grainHandlerPointer mixedGrainHandler(mixedGrainPointer grain){
   auto thisGrain = static_cast<conductivity::mixedGrain<double> *>(grain);
   auto handler=new conductivity::grainHandler<double>(*thisGrain); 
+  //std::cout<<"OG LAMBDA= "<<&thisGrain->lambda_k<<"\n";
+  //std::cout<<"OG LAMBDA[1]= "<<thisGrain->lambda_k[1]<<"\n";
   return (grainHandlerPointer) handler;
 }
 grainHandlerPointer coatedGrainHandler(coatedGrainPointer grain){
@@ -142,9 +144,12 @@ void setDensity(double* density, dustDist distribution,int len){
   thisDistribution->dustSizeDensity=std::vector<double>(density,density+len);
 }
 void calculateOpacity(dustDist distribution,grainHandlerPointer grain,double* opacities){
-  dust::dustDistribution<double> &thisDistribution = *static_cast<dust::dustDistribution<double> *> (distribution); 
-  conductivity::grainHandler<double> &thisGrain = *static_cast<conductivity::grainHandler<double> *> (grain); 
-  opacity::KappaDust_fast_Array<double>(opacities, thisGrain, thisDistribution);  
+  //std::cout<<grain<<"\n";
+  auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 
+  auto thisGrain = static_cast<conductivity::grainHandler<double> *> (grain); 
+  //std::cout<<&(thisGrain->lambda_k)<< " " << thisGrain->lambda_k[0]<< "\n";
+  //std::cout<<&(thisDistribution->dustSizeBins)<<"\n";
+  opacity::KappaDust_fast_Array<double>(opacities, *thisGrain, *thisDistribution);  
 }
 void deallocateDust(dustDist distribution){
   auto thisDistribution = static_cast<dust::dustDistribution<double> *> (distribution); 

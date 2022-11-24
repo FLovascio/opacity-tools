@@ -73,6 +73,19 @@ public:
 };
 
 template<class T>
+class aggregateGrain{
+  public:
+  std::vector<T> lambda_k;
+  std::vector<std::complex<T>> sigma_1_k;
+  std::vector<std::complex<T>> sigma_2_k;
+  std::vector<std::complex<T>> sigma_eff_k;
+  T f0; //
+  T f1; //
+  T g0; 
+  aggregateGrain(){;}
+};
+
+template<class T>
 class grainHandler{
 public:
   std::vector<T> &lambda_k; 
@@ -110,6 +123,20 @@ std::complex<T> BrugemannSumDerivativeFunction(std::complex<T> sigma_eff,
                   (grain.sigma_ij[i][lambda_k_i] + (n_minus_1 * sigma_eff)));
   }
   return sum_value;
+}
+
+template<class T>
+std::complex<T> EMT_O(std::complex<T> sigma_eff,int lambda_k_i,const mixedGrain<T> &grain){
+  std::complex<T> sum_value(0.0, 0.0);
+  int n = grain.delta_i.size();
+  T n_minus_1 = n - 1.0;
+  for (int i = 0; i < n; ++i) {
+    sum_value += grain.delta_i[i] * 1.0;
+    sum_value += grain.delta_i[i] * 1.0;
+    sum_value += grain.delta_i[i] * 1.0;
+    sum_value += grain.delta_i[i] * 1.0;
+  }
+  return sum_value; 
 }
 
 template <class T> void coatedGrainConductivity(coatedGrain<T> &grain, int i) {

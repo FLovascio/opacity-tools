@@ -200,7 +200,7 @@ void KappaDust_fast_Array(T *output, conductivity::grainHandler<T> grain,
   T sigma = 0.0;
   T xVar = 0.0;
   T HVar = 0.0;
-  // std::cout<<"looping "<<grain.lambda_k.size()<<" times\n";
+  //std::cout<<"looping "<<grain.lambda_k.size()<<" times\n";
   for (int k = 0; k < grain.lambda_k.size(); ++k) {
     output[k]=fillValue;
     lambda = grain.lambda_k[k];
@@ -209,7 +209,7 @@ void KappaDust_fast_Array(T *output, conductivity::grainHandler<T> grain,
     sigma = sigma_jk(lambda, e1Var, e2Var, 0.3333333333333333);
     xVar = xj(sigma, lambda);
     HVar = H_j(xVar, e1Var, e2Var);
-    // std::cout<<k<<"\n"; //debugging print
+    //std::cout<<k<<"\n"; //debugging print
     for (int idust = 0; idust < dustDist.nbin; ++idust) {
       xVar = xj<T>(lambda, dustDist.dustSizeBins[idust]);
       HVar = H_j<T>(xVar, e1Var, e2Var);

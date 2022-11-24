@@ -58,7 +58,7 @@ class mixedGrain:
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
     self.conductivities.setflags(write=False)
     self.deltas= make_nd_array(deltaPoint,shape=(self.nMaterials,),dtype=np.float64,own_data=False)
-    self.handler=get_handler(self.grain_pointer)
+    self.handler=get_handler(ctypes.c_void_p(self.grain_pointer))
   def compute_conductivity(self):
     lib.calculateConductivity(ctypes.c_void_p(self.grain_pointer))
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
@@ -84,7 +84,7 @@ class coatedGrain:
     self.rawConductivities = make_nd_array(condPoint,shape=(2*self.length,),dtype=np.float64,own_data=False)
     self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
     self.conductivities.setflags(write=False)
-    self.handler=get_handler(self.grain_pointer)
+    self.handler=get_handler(ctypes.c_void_p(self.grain_pointer))
   def add_layer(self,shell,thickness):
     addLayer=lib.addLayer
     addLayer(ctypes.c_void_p(self.grain_pointer),ctypes.c_void_p(shell.grain_pointer),ctypes.c_double(thickness)) 
@@ -121,7 +121,6 @@ class opacity:
     alocate=libc.malloc
     alocate.restype=ctypes.c_void_p
     self.buffer=buffer
-    #self.opacity_data_pointer=alocate(length+buffer,ctypes.sizeof(ctypes.c_double))
     self.opacity_data_pointer=alocate((length+buffer)*ctypes.sizeof(ctypes.c_double))
     self.data = make_nd_array(ctypes.c_void_p(self.opacity_data_pointer),shape=(length,),dtype=np.float64,own_data=False)
     self.length=length
