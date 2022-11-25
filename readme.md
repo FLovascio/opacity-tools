@@ -44,8 +44,10 @@ For C linkage, you will have to link the static libraries found in `opacity-tool
 For FORTRAN linkage, FORTRAN friendly functions `type functionname_(arg*, ...)` have been defined in the `*_interface.cxx` files, these functions take care of most quirks of FORTRAN arg passing quirks internally and _should_ behave to a user in the same way as their C counterparts. An example of FORTRAN usage of the libs is provided in `opacity-tools/examples/`. 
 
 ##### Other
-There is currently no support for other languages, though a python wrapper is on the roadmap. All languages that can call C functions should be easy to support, and this can be "left as an exercise to the user".
+There is currently no support for other languages, though all languages with C interop are technically supported. All languages that can call C functions should be easy to support, and this can be "left as an exercise to the user".
 
+### opacities.py
+A python wrapper is also provided, it calls the C++ library functions through a C layer. Memory allocation is all handled in C++, but has not been extensively tested, so it is very much possible to reate a segfault if you try. If you create an instance of aany "surprising" segfaults, raif a bug, I will try to chase it down and fix it! I will write and package up an installer for the python wrapper as well. An example jupyter notebook is also provided. 
 
 ## Version 1.0 release roadmap
 
@@ -55,5 +57,5 @@ There is currently no support for other languages, though a python wrapper is on
 - Support for C and FORTRAN lib calls ✅
 - Python wrapper & numpy support      ✅ 
 - Rosseland & Planck opacities        ✅ 
-- Percolated dust grains              ❗️
+- Percolated dust grains              ️✅
 - Interpolation                       ❗️
