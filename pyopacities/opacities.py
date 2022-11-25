@@ -112,7 +112,7 @@ class percolatedMixedGrain:
     get_lambda.restype=ctypes.c_void_p
     get_cond=lib.get_conductivitiesPercolated
     get_cond.restype=ctypes.c_void_p
-    get_delta=lib.get_delta_Percolated
+    get_delta=lib.get_deltaPercolated
     get_delta.restype=ctypes.c_void_p
     self.grain_pointer=alocate(ctypes.c_char_p(dirString))
     lambdaPoint=get_lambda(ctypes.c_void_p(self.grain_pointer))
