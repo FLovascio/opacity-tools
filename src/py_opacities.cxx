@@ -10,6 +10,7 @@ typedef void* opacityVector;
 typedef void* meanOpacity;
 typedef void* conductivityObj;
 typedef void *mixedGrainPointer;
+typedef void *mixedPercolatedGrainPointer;
 typedef void *coatedGrainPointer;
 typedef void *grainHandlerPointer;
 
@@ -112,12 +113,55 @@ void deleteCoatedGrain(coatedGrainPointer grain) {
   auto *thisGrain = static_cast<conductivity::coatedGrain<double> *>(grain);
   delete thisGrain;
 }
+// Percolated grains
+mixedPercolatedGrainPointer makePercolatedMixedGrain(char *dir) {
+  // New constructor function also computes effective conductivity in call. I
+  // see no reason not to and this should avoid some issues.
+  std::string fileDir = std::string(dir);
+  auto *thisGrain = new conductivity::mixedPercolatedGrain<double>(
+      std::move(conductivity::readPercolatedGrainFromSetup<double>(fileDir, 1e-4)));
+  conductivity::solveSystem<double>(*thisGrain);
+  return (mixedPercolatedGrainPointer)thisGrain;
+}
+void solveEMTSystem(mixedPercolatedGrainPointer grain) {
+  auto thisGrain = static_cast<conductivity::mixedPercolatedGrain<double> *>(grain);
+  conductivity::solveSystem<double>(*thisGrain);
+}
+int get_nmaterialsPercolated(mixedPercolatedGrainPointer grain){
+    auto thisGrain =static_cast<conductivity::mixedPercolatedGrain<double> *>(grain);
+  return thisGrain->delta_i.size(); 
+}
+void* get_conductivitiesPercolated(mixedPercolatedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedPercolatedGrain<double> *>(grain);
+  return (void *)thisGrain->sigma_eff_j.data();
+}
+void* get_lambdaPercolated(mixedPercolatedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedPercolatedGrain<double> *>(grain);
+  return (void *)thisGrain->lambda_k.data();
+}
+void* get_deltaPercolated(mixedPercolatedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedPercolatedGrain<double> *>(grain);
+  return (void *)thisGrain->delta_i.data();
+}
+int get_lengthPercolated(mixedPercolatedGrainPointer grain){
+  auto thisGrain =static_cast<conductivity::mixedPercolatedGrain<double> *>(grain);
+  return thisGrain->lambda_k.size();
+}
+void deleteMixedPercolatedGrain(mixedPercolatedGrainPointer grain) {
+  auto *thisGrain = static_cast<conductivity::mixedPercolatedGrain<double> *>(grain);
+  delete thisGrain;
+}
 // Grain handler
 grainHandlerPointer mixedGrainHandler(mixedGrainPointer grain){
   auto thisGrain = static_cast<conductivity::mixedGrain<double> *>(grain);
   auto handler=new conductivity::grainHandler<double>(*thisGrain); 
   //std::cout<<"OG LAMBDA= "<<&thisGrain->lambda_k<<"\n";
   //std::cout<<"OG LAMBDA[1]= "<<thisGrain->lambda_k[1]<<"\n";
+  return (grainHandlerPointer) handler;
+}
+grainHandlerPointer mixedPercolatedGrainHandler(mixedGrainPointer grain){
+  auto thisGrain = static_cast<conductivity::mixedPercolatedGrain<double> *>(grain);
+  auto handler=new conductivity::grainHandler<double>(*thisGrain); 
   return (grainHandlerPointer) handler;
 }
 grainHandlerPointer coatedGrainHandler(coatedGrainPointer grain){

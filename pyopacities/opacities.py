@@ -98,6 +98,41 @@ class coatedGrain:
   def __del__(self):
     lib.deleteCoatedGrain(ctypes.c_char_p(self.grain_pointer))
     del(self.grain_pointer)
+
+class percolatedMixedGrain:
+  # __del__(self) has been overloaded so that if GC tries to clean up the object,
+  # the correct thing is done
+  def __init__(self,setupDir):
+    dirString = setupDir.encode('utf-8')
+    alocate=lib.makePercolatedMixedGrain
+    alocate.restype=ctypes.c_void_p
+    get_handler=lib.mixedPercolatedGrainHandler
+    get_handler.restype=ctypes.c_void_p
+    get_lambda=lib.get_lambdaPercolated
+    get_lambda.restype=ctypes.c_void_p
+    get_cond=lib.get_conductivitiesPercolated
+    get_cond.restype=ctypes.c_void_p
+    get_delta=lib.get_delta_Percolated
+    get_delta.restype=ctypes.c_void_p
+    self.grain_pointer=alocate(ctypes.c_char_p(dirString))
+    lambdaPoint=get_lambda(ctypes.c_void_p(self.grain_pointer))
+    condPoint=get_cond(ctypes.c_void_p(self.grain_pointer))
+    deltaPoint=get_delta(ctypes.c_void_p(self.grain_pointer))
+    self.nMaterials=lib.get_nmaterials(ctypes.c_void_p(self.grain_pointer))
+    self.length=lib.get_lengthMixed(ctypes.c_void_p(self.grain_pointer))
+    self.lambdas = make_nd_array(lambdaPoint, shape=(self.length,),dtype=np.float64,own_data=False) 
+    self.rawConductivities = make_nd_array(condPoint,shape=(2*self.length,),dtype=np.float64,own_data=False)
+    self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
+    self.conductivities.setflags(write=False)
+    self.deltas= make_nd_array(deltaPoint,shape=(self.nMaterials,),dtype=np.float64,own_data=False)
+    self.handler=get_handler(ctypes.c_void_p(self.grain_pointer))
+  def compute_conductivity(self):
+    lib.calculateConductivity(ctypes.c_void_p(self.grain_pointer))
+    self.conductivities= self.rawConductivities[0::2]+1.0j*self.rawConductivities[1::2]
+    self.conductivities.setflags(write=False)
+  def __del__(self):
+    lib.deleteMixedGrain(ctypes.c_char_p(self.grain_pointer))
+    del(self.grain_pointer) 
 class dustDistribution:
   # __del__(self) has been overloaded so that if GC tries to clean up the object,
   # the correct thing is done

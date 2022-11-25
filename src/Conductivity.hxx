@@ -37,14 +37,14 @@ public:
 };
 
 template <class T>
-class mixedFluffyGrain {
+class mixedPercolatedGrain {
 public:
   std::vector<std::vector<std::complex<T>>> sigma_ij;
   std::vector<T> delta_i;
   std::vector<T> lambda_k;
   std::vector<std::complex<T>> sigma_eff_j;
 
-  mixedFluffyGrain(std::vector<std::vector<std::complex<T>>> sigma_ij_input,
+  mixedPercolatedGrain(std::vector<std::vector<std::complex<T>>> sigma_ij_input,
              std::vector<T> delta_i_input, std::vector<T> lambda_k_input) {
     sigma_ij = sigma_ij_input;
     delta_i = delta_i_input;
@@ -52,7 +52,7 @@ public:
     sigma_eff_j = sigma_ij[0];
   }
 
-  mixedFluffyGrain(const mixedFluffyGrain<T> &a) {
+  mixedPercolatedGrain(const mixedPercolatedGrain<T> &a) {
     sigma_ij = a.sigma_ij;
     delta_i = a.delta_i;
     lambda_k = a.lambda_k;
@@ -115,7 +115,7 @@ public:
   std::vector<T> &lambda_k; 
   std::vector<std::complex<T>> &sigma_k;
   grainHandler(mixedGrain<T>& grain_):lambda_k(grain_.lambda_k),sigma_k(grain_.sigma_eff_j){;}
-  grainHandler(mixedFluffyGrain<T>& grain_):lambda_k(grain_.lambda_k),sigma_k(grain_.sigma_eff_j){;}
+  grainHandler(mixedPercolatedGrain<T>& grain_):lambda_k(grain_.lambda_k),sigma_k(grain_.sigma_eff_j){;}
   grainHandler(coatedGrain<T>& grain_):lambda_k(grain_.lambda_k),sigma_k(grain_.sigma_eff_k){;}
 };
 
@@ -151,7 +151,7 @@ std::complex<T> BrugemannSumDerivativeFunction(std::complex<T> sigma_eff,
 }
 
 template<class T>
-std::complex<T> EMT_O(std::complex<T> sigma_eff,int lambda_k_i,const mixedFluffyGrain<T> &grain){
+std::complex<T> EMT_O(std::complex<T> sigma_eff,int lambda_k_i,const mixedPercolatedGrain<T> &grain){
   std::complex<T> sum_value(0.0, 0.0);
   int n = grain.delta_i.size();
   T n_minus_1 = n - 1.0;
@@ -238,6 +238,34 @@ mixedGrain<T> readGrainFromSetup(std::string dir, T unit_conversion = 1e-4) {
   return returnGrain;
 }
 
+template <class T>
+mixedPercolatedGrain<T> readPercolatedGrainFromSetup(std::string dir, T unit_conversion = 1e-4) {
+  std::vector<std::vector<std::complex<T>>> materialProperties;
+  std::vector<std::string> materials;
+  T totalcon = 0;
+  std::vector<T> concentration;
+  std::vector<std::complex<T>> condV = {std::complex<T>{0.0, 0.0}};
+  std::vector<T> lambdas;
+  setupFiles::readMaterialsFile(materials, concentration, dir);
+  totalcon = std::accumulate(std::begin(concentration), std::end(concentration),
+                             T(0.0));
+  for (auto &n : concentration) {
+    n /= totalcon;
+  }
+  for (int i = 0; i < materials.size(); ++i) {
+    delimitedFiles::readDatToComplexVector<T>(condV, dir + "n_" + materials[i] +
+                                                         ".dat");
+    materialProperties.push_back(condV);
+  }
+  delimitedFiles::readDatToVector<T>(lambdas,
+                                     dir + "n_" + materials[0] + ".dat");
+  for (int i = 0; i < lambdas.size(); ++i) {
+    lambdas[i] = lambdas[i] * unit_conversion;
+  }
+  mixedPercolatedGrain<T> returnGrain(materialProperties, concentration, lambdas);
+  return returnGrain;
+}
+
 template <class T> void solveSystem(mixedGrain<T> &grain) {
   std::complex<T> current_best_guess(1.0, 1.0);
   std::function<std::complex<T>(std::complex<T>, int)> BrugemannSum =
@@ -255,7 +283,7 @@ template <class T> void solveSystem(mixedGrain<T> &grain) {
   }
 }
 
-template <class T> void solveSystem(mixedFluffyGrain<T> &grain) {
+template <class T> void solveSystem(mixedPercolatedGrain<T> &grain) {
   std::complex<T> current_best_guess(1.0, 1.0);
   std::function<std::complex<T>(std::complex<T>, int)> EMT_O_ =
       [grain](std::complex<T> sigma_eff, int lambda_k_i) {
