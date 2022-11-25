@@ -36,6 +36,33 @@ solve(std::complex<T> x_0, T threshold,
             << std::endl;
   return x_n;
 }
+template <class T, class... argType>
+std::complex<T>
+steffensenStep(std::complex<T> x_0,
+           std::function<std::complex<T>(std::complex<T>, argType...)> &f,
+           argType... args) {
+  std::complex<T> f_x = f(x_0, args...);
+  std::complex<T> g_x = (f(x_0+f_x,args...)/f_x)-1.0;
+  std::complex<T> x_1 = x_0 - f_x/g_x;
+  return x_1;
+}
+template <class T, class... argType>
+std::complex<T>
+solve(std::complex<T> x_0, T threshold,
+      std::function<std::complex<T>(std::complex<T>, argType...)> &f,
+      argType... args) {
+  std::complex<T> x_n = x_0;
+  for (int i = 0; i < 1000; ++i) {
+    x_n = steffensenStep(x_n, f, args...);
+    if (std::abs(f(x_n, args...)) < threshold) {
+      return x_n;
+    }
+  }
+  std::cerr << "ROOTFINDER WARNING: The root finder did not converge in 1000 "
+               "steps: returned x at last step"
+            << std::endl;
+  return x_n;
+}
 } // namespace complexRootFind
 
 namespace rootFind {
@@ -51,6 +78,31 @@ T solve(T x_0, T threshold, std::function<T(T, argType...)> &f,
   T x_n = x_0;
   for (int i = 0; i < 1000; ++i) {
     x_n = newtonStep(x_n, f, f_prime, args...);
+    if (std::abs(f(x_n, args...)) < threshold) {
+      return x_n;
+    }
+  }
+  std::cerr << "ROOTFINDER WARNING: The root finder did not converge in 1000 "
+               "steps: returned x at last step"
+            << std::endl;
+  return x_n;
+}
+template <class T, class... argType>
+T steffensenStep(T x_0,
+           std::function<T(T, argType...)> &f,
+           argType... args) {
+  T f_x = f(x_0, args...);
+  T g_x = (f(x_0+f_x,args...)/f_x)-1.0;
+  T x_1 = x_0 - f_x/g_x;
+  return x_1;
+}
+template <class T, class... argType>
+T solve(T x_0, T threshold,
+      std::function<T(T, argType...)> &f,
+      argType... args) {
+  T x_n = x_0;
+  for (int i = 0; i < 1000; ++i) {
+    x_n = steffensenStep(x_n, f, args...);
     if (std::abs(f(x_n, args...)) < threshold) {
       return x_n;
     }

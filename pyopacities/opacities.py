@@ -18,7 +18,6 @@ elif platform.system()=='Windows':
   warnings.warn("Windows is not tested, the package may not work, or worse, quietly do the wrong thing.")
 
 libc = ctypes.CDLL(find_library('c'))
-#libc.malloc.restype = ctypes.c_void_p
 
 cdll.LoadLibrary('./'+lib_name)
 lib = ctypes.CDLL('./'+lib_name)
@@ -35,6 +34,8 @@ def make_nd_array(c_pointer, shape, dtype=np.float64, order='C', own_data=True):
   else:
     return arr
 class mixedGrain:
+  # __del__(self) has been overloaded so that if GC tries to clean up the object,
+  # the correct thing is done
   def __init__(self,setupDir):
     dirString = setupDir.encode('utf-8')
     alocate=lib.makeMixedGrain
@@ -67,6 +68,8 @@ class mixedGrain:
     lib.deleteMixedGrain(ctypes.c_char_p(self.grain_pointer))
     del(self.grain_pointer) 
 class coatedGrain:
+  # __del__(self) has been overloaded so that if GC tries to clean up the object,
+  # the correct thing is done
   def __init__(self,core,shell,r1,r2):
     alocate=lib.makeCoatedGrain
     alocate.restype=ctypes.c_void_p
@@ -96,6 +99,8 @@ class coatedGrain:
     lib.deleteCoatedGrain(ctypes.c_char_p(self.grain_pointer))
     del(self.grain_pointer)
 class dustDistribution:
+  # __del__(self) has been overloaded so that if GC tries to clean up the object,
+  # the correct thing is done
   def __init__(self,grainSize,sizeDensity):
     alocate=lib.makeDustDist
     alocate.restype=ctypes.c_void_p
@@ -116,8 +121,9 @@ class dustDistribution:
     del(self.dust_object)
     del(self.length)
 class opacity:
+  # __del__(self) has been overloaded so that if GC tries to clean up the object,
+  # the correct thing is done
   def __init__(self,length,buffer=16):
-    #alocate=libc.calloc
     alocate=libc.malloc
     alocate.restype=ctypes.c_void_p
     self.buffer=buffer
