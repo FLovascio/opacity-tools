@@ -115,6 +115,7 @@ public:
   std::vector<T> &lambda_k; 
   std::vector<std::complex<T>> &sigma_k;
   grainHandler(mixedGrain<T>& grain_):lambda_k(grain_.lambda_k),sigma_k(grain_.sigma_eff_j){;}
+  grainHandler(mixedFluffyGrain<T>& grain_):lambda_k(grain_.lambda_k),sigma_k(grain_.sigma_eff_j){;}
   grainHandler(coatedGrain<T>& grain_):lambda_k(grain_.lambda_k),sigma_k(grain_.sigma_eff_k){;}
 };
 
