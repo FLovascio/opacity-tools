@@ -36,6 +36,30 @@ public:
   }
 };
 
+template <class T>
+class mixedFluffyGrain {
+public:
+  std::vector<std::vector<std::complex<T>>> sigma_ij;
+  std::vector<T> delta_i;
+  std::vector<T> lambda_k;
+  std::vector<std::complex<T>> sigma_eff_j;
+
+  mixedFluffyGrain(std::vector<std::vector<std::complex<T>>> sigma_ij_input,
+             std::vector<T> delta_i_input, std::vector<T> lambda_k_input) {
+    sigma_ij = sigma_ij_input;
+    delta_i = delta_i_input;
+    lambda_k = lambda_k_input;
+    sigma_eff_j = sigma_ij[0];
+  }
+
+  mixedFluffyGrain(const mixedFluffyGrain<T> &a) {
+    sigma_ij = a.sigma_ij;
+    delta_i = a.delta_i;
+    lambda_k = a.lambda_k;
+    sigma_eff_j = a.sigma_eff_j;
+  }
+};
+
 template <class T> class coatedGrain {
 public:
   std::vector<T> lambda_k;
@@ -103,7 +127,7 @@ std::complex<T> BrugemannSumFunction(std::complex<T> sigma_eff, int lambda_k_i,
   for (int i = 0; i < n; ++i) {
     sum_value += grain.delta_i[i] *
                  (grain.sigma_ij[i][lambda_k_i] - sigma_eff) /
-                 (grain.sigma_ij[i][lambda_k_i] + (n_minus_1 * sigma_eff));
+                 (grain.sigma_ij[i][lambda_k_i] + ((T)2.0 * sigma_eff));//(grain.sigma_ij[i][lambda_k_i] + (n_minus_1 * sigma_eff));
   }
   return sum_value;
 }
@@ -117,24 +141,30 @@ std::complex<T> BrugemannSumDerivativeFunction(std::complex<T> sigma_eff,
   T n_minus_1 = n - 1.0;
   for (int i = 0; i < n; ++i) {
     sum_value += grain.delta_i[i] *
-                 ((-grain.sigma_ij[i][lambda_k_i] - (n_minus_1 * sigma_eff)) -
-                  n_minus_1 * (grain.sigma_ij[i][lambda_k_i] - sigma_eff)) /
-                 ((grain.sigma_ij[i][lambda_k_i] + (n_minus_1 * sigma_eff)) *
-                  (grain.sigma_ij[i][lambda_k_i] + (n_minus_1 * sigma_eff)));
+                 ((-grain.sigma_ij[i][lambda_k_i] - ((T)2.0 * sigma_eff)) -
+                  (T)2.0 * (grain.sigma_ij[i][lambda_k_i] - sigma_eff)) /
+                 ((grain.sigma_ij[i][lambda_k_i] + ((T)2.0 * sigma_eff)) *
+                  (grain.sigma_ij[i][lambda_k_i] + ((T)2.0 * sigma_eff)));
   }
   return sum_value;
 }
 
 template<class T>
-std::complex<T> EMT_O(std::complex<T> sigma_eff,int lambda_k_i,const mixedGrain<T> &grain){
+std::complex<T> EMT_O(std::complex<T> sigma_eff,int lambda_k_i,const mixedFluffyGrain<T> &grain){
   std::complex<T> sum_value(0.0, 0.0);
   int n = grain.delta_i.size();
   T n_minus_1 = n - 1.0;
+  T over9 = 0.1111111111111111;
+  T over3 = 0.3333333333333333;
   for (int i = 0; i < n; ++i) {
-    sum_value += grain.delta_i[i] * 1.0;
-    sum_value += grain.delta_i[i] * 1.0;
-    sum_value += grain.delta_i[i] * 1.0;
-    sum_value += grain.delta_i[i] * 1.0;
+    T f0=5.0*over9*grain.delta_i[i]*sin(M_PI*grain.delta_i[i])*sin(M_PI*grain.delta_i[i]);
+    T f1=2.0*over9*grain.delta_i[i]*sin(M_PI*grain.delta_i[i])*sin(M_PI*grain.delta_i[i]);
+    T f2=2.0*over9*grain.delta_i[i]*sin(M_PI*grain.delta_i[i])*sin(M_PI*grain.delta_i[i]);
+    T f3=grain.delta_i[i]*sin(M_PI*grain.delta_i[i])*sin(M_PI*grain.delta_i[i]);
+    sum_value += f0 * ((grain.sigma_ij[i][lambda_k_i]-sigma_eff)/(sigma_eff));
+    sum_value += f1 * ((grain.sigma_ij[i][lambda_k_i]-sigma_eff)/(sigma_eff+0.5*(grain.sigma_ij[i][lambda_k_i]-sigma_eff)));
+    sum_value += f2 * ((grain.sigma_ij[i][lambda_k_i]-sigma_eff)/(sigma_eff+1.0*(grain.sigma_ij[i][lambda_k_i]-sigma_eff)));
+    sum_value += f3 * ((grain.sigma_ij[i][lambda_k_i]-sigma_eff)/(sigma_eff+over3*(grain.sigma_ij[i][lambda_k_i]-sigma_eff)));
   }
   return sum_value; 
 }
@@ -220,6 +250,19 @@ template <class T> void solveSystem(mixedGrain<T> &grain) {
   for (int i = 0; i < grain.lambda_k.size(); ++i) {
     grain.sigma_eff_j[i] = complexRootFind::solve<T, int>(
         current_best_guess, 1e-8, BrugemannSum, BrugemannSumDerivative, i);
+    current_best_guess = grain.sigma_eff_j[i];
+  }
+}
+
+template <class T> void solveSystem(mixedFluffyGrain<T> &grain) {
+  std::complex<T> current_best_guess(1.0, 1.0);
+  std::function<std::complex<T>(std::complex<T>, int)> EMT_O_ =
+      [grain](std::complex<T> sigma_eff, int lambda_k_i) {
+        return EMT_O<T>(sigma_eff, lambda_k_i, grain);
+      };
+  for (int i = 0; i < grain.lambda_k.size(); ++i) {
+    grain.sigma_eff_j[i] = complexRootFind::solve<T, int>(
+        current_best_guess, 1e-8, EMT_O_, i);
     current_best_guess = grain.sigma_eff_j[i];
   }
 }
