@@ -154,9 +154,7 @@ void deleteMixedPercolatedGrain(mixedPercolatedGrainPointer grain) {
 // Grain handler
 grainHandlerPointer mixedGrainHandler(mixedGrainPointer grain){
   auto thisGrain = static_cast<conductivity::mixedGrain<double> *>(grain);
-  auto handler=new conductivity::grainHandler<double>(*thisGrain); 
-  //std::cout<<"OG LAMBDA= "<<&thisGrain->lambda_k<<"\n";
-  //std::cout<<"OG LAMBDA[1]= "<<thisGrain->lambda_k[1]<<"\n";
+  auto handler=new conductivity::grainHandler<double>(*thisGrain);
   return (grainHandlerPointer) handler;
 }
 grainHandlerPointer mixedPercolatedGrainHandler(mixedGrainPointer grain){

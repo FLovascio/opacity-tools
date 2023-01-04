@@ -9,3 +9,4 @@ set_target_properties(pyopacities
     PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/pyopacities/
 )
+pybind11_add_module(opacity_tools python_bindings.cxx)

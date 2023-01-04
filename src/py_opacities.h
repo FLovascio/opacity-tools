@@ -10,23 +10,32 @@ typedef void* meanOpacity;
 typedef void* mixedGrainPointer;
 typedef void* coatedGrainPointer;
 
-// general methods
-extern "C" void conductivitiesHelp();
+/// general methods
+void conductivitiesHelp();
 // mixedGrain methods
-extern "C" mixedGrainPointer makeMixedGrain(char *dir);
-extern "C" void solveBreugmannSystem(mixedGrainPointer grain);
-extern "C" void deleteMixedGrain(mixedGrainPointer grain);
+mixedGrainPointer makeMixedGrain(char *dir);
+void solveBreugmannSystem(mixedGrainPointer grain);
+int get_nmaterials(mixedGrainPointer grain);
+void* get_conductivitiesMixed(mixedGrainPointer grain);
+void* get_lambdaMixed(mixedGrainPointer grain);
+void* get_delta(mixedGrainPointer grain);
+int get_lengthMixed(mixedGrainPointer grain);
+void deleteMixedGrain(mixedGrainPointer grain);
 // coatedGrain methods
-extern "C" coatedGrainPointer makeCoatedGrain(mixedGrainPointer inner_, mixedGrainPointer outer_, double r1_, double r2_);
-extern "C" void solveCoatedGrainSystem(coatedGrainPointer grain);
-extern "C" void setOuter(coatedGrainPointer grain, mixedGrainPointer outer_, double r1_,double r2_);
-extern "C" void setInner(coatedGrainPointer grain, mixedGrainPointer inner_, double r1_,double r2_);
-extern "C" void addLayer(coatedGrainPointer grain, mixedGrainPointer coating_, double thickness);
-// legacy methods
-extern "C" conductivityObj buildConductivity(char *dir);
-extern "C" void calculateConductivity(conductivityObj grain);
-extern "C" double lambda(conductivityObj grain, int i);
-extern "C" void deallocateConductivityObject(conductivityObj grain);
+coatedGrainPointer makeCoatedGrain(mixedGrainPointer inner_,
+                                   mixedGrainPointer outer_, double r1_,
+                                   double r2_);
+void solveCoatedGrainSystem(coatedGrainPointer grain);
+void setOuter(coatedGrainPointer grain, mixedGrainPointer outer_, double r1_,
+              double r2_);
+void setInner(coatedGrainPointer grain, mixedGrainPointer inner_, double r1_,
+              double r2_);
+void addLayer(coatedGrainPointer grain, mixedGrainPointer coating_, double thickness);
+void* get_conductivitiesCoated(mixedGrainPointer grain);
+int get_lengthCoated(mixedGrainPointer grain);
+void* get_lambdaCoated(mixedGrainPointer grain);
+void deleteCoatedGrain(coatedGrainPointer grain);
+// dust distribution methods
 extern "C" dustDist makeDustDist(double* size, double* density, int len);
 extern "C" opacityVector makeOpacityVector(int len);
 extern "C" void setDustSize(double* size, dustDist distribution, int len);
